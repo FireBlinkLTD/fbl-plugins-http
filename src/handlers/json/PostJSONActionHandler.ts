@@ -1,6 +1,6 @@
 import {IActionHandlerMetadata} from 'fbl/dist/src/interfaces';
 import {BaseJsonActionHandler} from './BaseJsonActionHandler';
-import {GotFn, get} from 'got';
+import {GotFn, post} from 'got';
 
 export class PostJSONActionHandler extends BaseJsonActionHandler {
     private static metadata = <IActionHandlerMetadata> {
@@ -18,6 +18,6 @@ export class PostJSONActionHandler extends BaseJsonActionHandler {
     }
 
     gotFn(): GotFn {
-        return get;
+        return post;
     }
 }

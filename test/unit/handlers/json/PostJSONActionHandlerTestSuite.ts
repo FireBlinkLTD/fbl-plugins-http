@@ -1,13 +1,13 @@
 import {suite, test} from 'mocha-typescript';
 import {Container} from 'typedi';
 import {DummyServerWrapper} from '../../../assets/dummy.http.server.wrapper';
-import {GetJSONActionHandler} from '../../../../src/handlers/json';
+import {PostJSONActionHandler} from '../../../../src/handlers/json';
 import {ContextUtil} from 'fbl/dist/src/utils';
 import {ActionSnapshot} from 'fbl/dist/src/models';
 import * as assert from 'assert';
 
 @suite()
-class GetJSONActionHandlerTestSuite {
+class PostJSONActionHandlerTestSuite {
     private dummyServerWrapper: DummyServerWrapper;
 
     async after(): Promise<void> {
@@ -24,7 +24,7 @@ class GetJSONActionHandlerTestSuite {
         this.dummyServerWrapper = new DummyServerWrapper();
         await this.dummyServerWrapper.start();
 
-        const actionHandler = new GetJSONActionHandler();
+        const actionHandler = new PostJSONActionHandler();
         const options = {
             request: {
                 url: DummyServerWrapper.ENDPOINT + '/json',
@@ -33,6 +33,11 @@ class GetJSONActionHandlerTestSuite {
                 },
                 headers: {
                     'X-Test': '1234'
+                },
+                body: {
+                    inline: {
+                        test: true
+                    }
                 }
             },
             response: {
@@ -57,8 +62,11 @@ class GetJSONActionHandlerTestSuite {
         await actionHandler.execute(options, context, snapshot, {});
 
         assert.strictEqual(context.ctx.response.code, 200);
-        assert.deepStrictEqual(context.ctx.response.body.type, 'GET');
+        assert.deepStrictEqual(context.ctx.response.body.type, 'POST');
         assert.deepStrictEqual(context.ctx.response.body.query, options.request.query);
         assert.strictEqual(context.ctx.response.body.headers['x-test'], '1234');
+        assert.deepStrictEqual(context.ctx.response.body.body, {
+            test: true
+        });
     }
 }
