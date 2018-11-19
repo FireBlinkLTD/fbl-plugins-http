@@ -1,6 +1,8 @@
 .idea/
 *.iml
 
+.circleci/
+
 .nyc_output/
 coverage/
 mochawesome-report/
@@ -10,9 +12,9 @@ node_modules/
 
 src/
 test/
+dist/test/
 tslint.json
 tsconfig.json
 
 index.ts
-
 yarn-error.log

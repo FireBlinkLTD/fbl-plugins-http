@@ -7,6 +7,7 @@ import {ContextUtil, FSUtil} from 'fbl/dist/src/utils';
 import {dirname} from 'path';
 import {promisify} from 'util';
 import {writeFile} from 'fs';
+import {URLSearchParams} from 'url';
 
 export abstract class BaseJsonActionHandler extends ActionHandler {
     getValidationSchema(): Joi.SchemaLike | null {
