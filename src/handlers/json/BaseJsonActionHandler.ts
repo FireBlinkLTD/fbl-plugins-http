@@ -2,7 +2,7 @@ import {ActionHandler, ActionSnapshot} from 'fbl/dist/src/models';
 import * as Joi from 'joi';
 import {FBL_PLUGIN_HTTP_BASE_SCHEMA} from '../../schemas';
 import {GotFn, GotJSONOptions} from 'got';
-import {IContext, IDelegatedParameters} from 'fbl/dist/src/interfaces';
+import {IActionHandlerMetadata, IContext, IDelegatedParameters} from 'fbl/dist/src/interfaces';
 import {ContextUtil, FSUtil} from 'fbl/dist/src/utils';
 import {dirname} from 'path';
 import {promisify} from 'util';
@@ -10,10 +10,25 @@ import {writeFile} from 'fs';
 import {URLSearchParams} from 'url';
 
 export abstract class BaseJsonActionHandler extends ActionHandler {
+    getMetadata(): IActionHandlerMetadata {
+        const name = this.name();
+
+        return <IActionHandlerMetadata> {
+            id: `com.fireblink.fbl.plugins.http.${name}.json`,
+            aliases: [
+                `fbl.plugins.http.${name}.json`,
+                `plugins.http.${name}.json`,
+                `http.${name}.json`,
+                `${name}.json`,
+            ]
+        }
+    }
+
     getValidationSchema(): Joi.SchemaLike | null {
         return FBL_PLUGIN_HTTP_BASE_SCHEMA;
     }
 
+    abstract name(): string;
     abstract gotFn(): GotFn;
 
     async validate(options: any, context: IContext, snapshot: ActionSnapshot, parameters: IDelegatedParameters): Promise<void> {

@@ -14,13 +14,6 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
-chai.use(function (_chai: any, _: any) {
-    _chai.Assertion.addMethod('withMessage', function (msg: string) {
-        _.flag(this, 'message', msg);
-    });
-});
-
-
 @suite()
 class PostJSONActionHandlerTestSuite {
     async after(): Promise<void> {
@@ -115,50 +108,5 @@ class PostJSONActionHandlerTestSuite {
         assert.deepStrictEqual(context.ctx.response.body.body, {
             file: true
         });
-    }
-
-    @test()
-    async failValidationOnMissingBodyFile(): Promise<void> {
-        const actionHandler = new PostJSONActionHandler();
-        const options = {
-            request: {
-                url: DummyServerWrapper.ENDPOINT + '/json',
-                body: {
-                    file: 'missing_body.file'
-                }
-            }
-        };
-
-        const context = ContextUtil.generateEmptyContext();
-        const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, __dirname, 0, {});
-
-        await chai.expect(
-            actionHandler.validate(options, context, snapshot, {})
-        ).to.be.rejectedWith(
-            `Unable to locate body payload file at path: ${FSUtil.getAbsolutePath(options.request.body.file, __dirname)}`
-        );
-    }
-
-    @test()
-    async failValidationOnUploadFileOption(): Promise<void> {
-        const actionHandler = new PostJSONActionHandler();
-        const options = {
-            request: {
-                url: DummyServerWrapper.ENDPOINT + '/json',
-                body: {
-                    file: 'file.json',
-                    upload: true
-                }
-            }
-        };
-
-        const context = ContextUtil.generateEmptyContext();
-        const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
-
-        await chai.expect(
-            actionHandler.validate(options, context, snapshot, {})
-        ).to.be.rejectedWith(
-            'request.body.upload parameter is not allowed for JSON requests'
-        );
     }
 }
