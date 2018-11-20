@@ -12,8 +12,8 @@ import {ActionHandler, ActionSnapshot} from 'fbl/dist/src/models';
 import * as assert from 'assert';
 import {TempPathsRegistry} from 'fbl/dist/src/services';
 import {basename, dirname} from 'path';
-import {promisify} from "util";
-import {writeFile} from "fs";
+import {promisify} from 'util';
+import {writeFile} from 'fs';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
