@@ -20,18 +20,17 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
         await super.validate(options, context, snapshot, parameters);
 
         if (options.request.body) {
-            if (options.request.body.file) {
-                const exists = await FSUtil.exists(
-                    FSUtil.getAbsolutePath(options.request.body.file, snapshot.wd)
-                );
-
-                if (!exists) {
-                    throw new Error(`Unable to locate body payload file at path: ${options.request.body.file}`);
-                }
+            if (options.request.body.upload) {
+                throw new Error('request.body.upload parameter is not allowed for JSON requests');
             }
 
-            if (options.request.body.upload) {
-                throw new Error('request.body.upload parameter can not be true for JSON requests');
+            if (options.request.body.file) {
+                const path = FSUtil.getAbsolutePath(options.request.body.file, snapshot.wd);
+                const exists = await FSUtil.exists(path);
+
+                if (!exists) {
+                    throw new Error(`Unable to locate body payload file at path: ${path}`);
+                }
             }
         }
     }
@@ -63,6 +62,7 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
 
         const response = await fn(options.request.url, requestOptions);
 
+        /* istanbul ignore else */
         if (options.response) {
             if (options.response.statusCode) {
                 if (options.response.statusCode.assignTo) {
@@ -81,14 +81,15 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
                         context,
                         parameters,
                         snapshot,
-                        options.response.statusCode.assignTo,
+                        options.response.statusCode.pushTo,
                         response.statusCode,
-                        options.response.statusCode.assignTo.children,
-                        options.response.statusCode.assignTo.override
+                        options.response.statusCode.pushTo.children,
+                        options.response.statusCode.pushTo.override
                     )
                 }
             }
 
+            /* istanbul ignore else */
             if (options.response.body) {
                 if (options.response.body.assignTo) {
                     await ContextUtil.assignTo(
@@ -106,10 +107,10 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
                         context,
                         parameters,
                         snapshot,
-                        options.response.body.assignTo,
+                        options.response.body.pushTo,
                         response.body,
-                        options.response.body.assignTo.children,
-                        options.response.body.assignTo.override
+                        options.response.body.pushTo.children,
+                        options.response.body.pushTo.override
                     )
                 }
 

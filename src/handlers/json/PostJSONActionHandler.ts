@@ -13,6 +13,7 @@ export class PostJSONActionHandler extends BaseJsonActionHandler {
         ]
     };
 
+    /* istanbul ignore next */
     getMetadata(): IActionHandlerMetadata {
         return PostJSONActionHandler.metadata;
     }
