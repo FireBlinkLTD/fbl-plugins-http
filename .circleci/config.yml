@@ -46,9 +46,9 @@ jobs:
       # test for outdated packages
       - run: yarn outdated
 
-      # test if app can run with prod dependencies
+      # test if plugin can be used with prod dependencies
       - run: yarn install --prod
-      - run: node dist/src/cli.js -V
+      - run: yarn fbl -p ~/repo/dist/index.js ./test/assets/dummy.flow.yml
 
       # store artifacts
       - store_artifacts:

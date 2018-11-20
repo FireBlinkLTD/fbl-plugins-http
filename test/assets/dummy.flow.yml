@@ -1,0 +1,4 @@
+pipeline:
+  ctx:
+    '$.it':
+      inline: 'works'
