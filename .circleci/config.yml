@@ -46,6 +46,9 @@ jobs:
       # test for outdated packages
       - run: yarn outdated
 
+      # lint code
+      - run: yarn lint
+
       # test if plugin can be used with prod dependencies
       - run: yarn install --prod
       - run: yarn fbl -p ~/repo/dist/index.js ./test/assets/dummy.flow.yml

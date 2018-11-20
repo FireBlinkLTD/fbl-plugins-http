@@ -21,7 +21,7 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
                 `http.${name}.json`,
                 `${name}.json`,
             ]
-        }
+        };
     }
 
     getValidationSchema(): Joi.SchemaLike | null {
@@ -53,7 +53,7 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
     async execute(options: any, context: IContext, snapshot: ActionSnapshot, parameters: IDelegatedParameters): Promise<void> {
         const fn = this.gotFn();
 
-        let requestOptions = <GotJSONOptions> {
+        const requestOptions = <GotJSONOptions> {
             headers: options.request.headers || {},
             timeout: options.request.timeout || 60,
             json: true
@@ -88,7 +88,7 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
                         options.response.statusCode.assignTo,
                         response.statusCode,
                         options.response.statusCode.assignTo.override
-                    )
+                    );
                 }
 
                 if (options.response.statusCode.pushTo) {
@@ -100,7 +100,7 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
                         response.statusCode,
                         options.response.statusCode.pushTo.children,
                         options.response.statusCode.pushTo.override
-                    )
+                    );
                 }
             }
 
@@ -114,7 +114,7 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
                         options.response.body.assignTo,
                         response.body,
                         options.response.body.assignTo.override
-                    )
+                    );
                 }
 
                 if (options.response.body.pushTo) {
@@ -126,7 +126,7 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
                         response.body,
                         options.response.body.pushTo.children,
                         options.response.body.pushTo.override
-                    )
+                    );
                 }
 
                 if (options.response.body.saveTo) {

@@ -8,7 +8,7 @@ const sendResponse = (type: string, req: Request, res: Response) => {
         query: req.query,
         headers: req.headers,
         body: req.body
-    })
+    });
 };
 
 JSONRouter.get('/', (req: Request, res: Response) => {
@@ -30,6 +30,5 @@ JSONRouter.put('/', (req: Request, res: Response) => {
 JSONRouter.patch('/', (req: Request, res: Response) => {
     sendResponse('PATCH', req, res);
 });
-
 
 export {JSONRouter};

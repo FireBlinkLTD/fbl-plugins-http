@@ -3,7 +3,7 @@ import {GotFn, post} from 'got';
 
 export class PostJSONActionHandler extends BaseJsonActionHandler {
     name(): string {
-        return 'post'
+        return 'post';
     }
 
     gotFn(): GotFn {

@@ -12,6 +12,8 @@ import {ActionHandler, ActionSnapshot} from 'fbl/dist/src/models';
 import * as assert from 'assert';
 import {TempPathsRegistry} from 'fbl/dist/src/services';
 import {basename, dirname} from 'path';
+import {promisify} from "util";
+import {writeFile} from "fs";
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
@@ -49,7 +51,7 @@ class JSONActionHandlersTestSuite {
 
         await Promise.all(handlers.map(async (it: any): Promise<void> => {
             return await fn(it.handler, it.type);
-        }))
+        }));
     }
 
     @test()
@@ -220,6 +222,49 @@ class JSONActionHandlersTestSuite {
             ).to.be.rejectedWith(
                 'request.body.upload parameter is not allowed for JSON requests'
             );
+        });
+    }
+
+    @test()
+    async bodyFromFile(): Promise<void> {
+        const tempPathRegistry = Container.get(TempPathsRegistry);
+        const file = await tempPathRegistry.createTempFile();
+        await promisify(writeFile)(file, JSON.stringify({file: true}), 'utf8');
+
+        await JSONActionHandlersTestSuite.forEachAction(async (actionHandler: ActionHandler, type: string): Promise<void> => {
+            const options = {
+                request: {
+                    url: DummyServerWrapper.ENDPOINT + '/json',
+                    body: {
+                        file: basename(file)
+                    }
+                },
+                response: {
+                    statusCode: {
+                        assignTo: {
+                            ctx: '$.response.code'
+                        }
+                    },
+
+                    body: {
+                        assignTo: {
+                            ctx: '$.response.body'
+                        }
+                    }
+                }
+            };
+
+            const context = ContextUtil.generateEmptyContext();
+            const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(file), 0, {});
+
+            await actionHandler.validate(options, context, snapshot, {});
+            await actionHandler.execute(options, context, snapshot, {});
+
+            assert.strictEqual(context.ctx.response.code, 200);
+            assert.deepStrictEqual(context.ctx.response.body.type, type);
+            assert.deepStrictEqual(context.ctx.response.body.body, {
+                file: true
+            });
         });
     }
 }

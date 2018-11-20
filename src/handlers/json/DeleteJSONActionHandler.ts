@@ -3,7 +3,7 @@ import * as got from 'got';
 
 export class DeleteJSONActionHandler extends BaseJsonActionHandler {
     name(): string {
-        return 'delete'
+        return 'delete';
     }
 
     gotFn(): got.GotFn {
