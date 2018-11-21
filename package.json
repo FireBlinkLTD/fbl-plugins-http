@@ -38,7 +38,7 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "express": "4.16.4",
-    "husky": "1.1.4",
+    "husky": "1.2.0",
     "mocha": "5.2.0",
     "mocha-typescript": "1.1.17",
     "mochawesome": "3.1.1",
