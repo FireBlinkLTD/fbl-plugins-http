@@ -236,9 +236,9 @@ acorn-node@^1.2.0:
     xtend "^4.0.1"
 
 acorn-walk@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-6.1.0.tgz#c957f4a1460da46af4a0388ce28b4c99355b0cbc"
-  integrity sha512-ugTb7Lq7u4GfWSqqpwE0bGyoBZNMTok/zDBXxfEG0QM50jNlGhIWjRC1pPN7bvV1anhF+bs+/gNcRw+o55Evbg==
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-6.1.1.tgz#d363b66f5fac5f018ff9c3a1e7b6f8e310cc3913"
+  integrity sha512-OtUw6JUTgxA2QoqqmrmQ7F2NYqiBPi/L2jqHyFtllhOUvXYQXf0Z1CYUinIfyT4bTCGmrA7gX9FvHA81uzCoVw==
 
 acorn@^6.0.2:
   version "6.0.4"
@@ -1127,10 +1127,10 @@ fast-json-stable-stringify@^2.0.0:
   resolved "https://registry.yarnpkg.com/fast-json-stable-stringify/-/fast-json-stable-stringify-2.0.0.tgz#d5142c0caee6b1189f87d3a76111064f86c8bbf2"
   integrity sha1-1RQsDK7msRifh9OnYREGT4bIu/I=
 
-fbl@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/fbl/-/fbl-1.1.0.tgz#11b142cfd738f704922348a90a60aa1634526482"
-  integrity sha512-TJciq07gtUnwgSAUYd1MTkcWFH3m1xXUNQzMO89DbAZ8PxO4w7MtqSZG72M8nM4j5n38IibHhabkN4uLtkybig==
+fbl@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/fbl/-/fbl-1.1.1.tgz#a232c0347e60d7d999afce329684b6ed34915436"
+  integrity sha512-RogprKcX6Eqc/ZFUfxIuqGoAE5Drd5cIa1enSsuvpg59rEVHXU/h008qxzYQa312yxv7NM09XBT+RGSZVRvc9Q==
   dependencies:
     cliui "4.1.0"
     colors "1.3.2"
@@ -1141,7 +1141,7 @@ fbl@1.1.0:
     glob-promise "3.4.0"
     got "9.3.2"
     humanize-duration "3.15.3"
-    joi "14.0.6"
+    joi "14.1.0"
     js-yaml "3.12.0"
     jsonschema "1.2.4"
     prompts "1.2.1"
@@ -1508,10 +1508,10 @@ humanize-duration@3.15.3:
   resolved "https://registry.yarnpkg.com/humanize-duration/-/humanize-duration-3.15.3.tgz#600a939bd9d9a16b696e907b3fc08d1a4f15e8c9"
   integrity sha512-BMz6w8p3NVa6QP9wDtqUkXfwgBqDaZ5z/np0EYdoWrLqL849Onp6JWMXMhbHtuvO9jUThLN5H1ThRQ8dUWnYkA==
 
-husky@1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/husky/-/husky-1.1.4.tgz#92f61383527d2571e9586234e5864356bfaceaa9"
-  integrity sha512-cZjGpS7qsaBSo3fOMUuR7erQloX3l5XzL1v/RkIqU6zrQImDdU70z5Re9fGDp7+kbYlM2EtS4aYMlahBeiCUGw==
+husky@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/husky/-/husky-1.2.0.tgz#d631dda1e4a9ee8ba69a10b0c51a0e2c66e711e5"
+  integrity sha512-/ib3+iycykXC0tYIxsyqierikVa9DA2DrT32UEirqNEFVqOj1bFMTgP3jAz8HM7FgC/C8pc/BTUa9MV2GEkZaA==
   dependencies:
     cosmiconfig "^5.0.6"
     execa "^1.0.0"
@@ -1781,15 +1781,6 @@ istanbul-reports@^2.0.1:
   integrity sha512-CT0QgMBJqs6NJLF678ZHcquUAZIoBIUNzdJrRJfpkI9OnzG6MkUfHxbJC3ln981dMswC7/B1mfX3LNkhgJxsuw==
   dependencies:
     handlebars "^4.0.11"
-
-joi@14.0.6:
-  version "14.0.6"
-  resolved "https://registry.yarnpkg.com/joi/-/joi-14.0.6.tgz#8c72314af6dba13ca48028a4f0af992ddc5a7472"
-  integrity sha512-mKXPSNYMG3taVBZemQj3pPOlMZGrnnu14JKAC6AHg6jJVX35L7oDk89ss1sHj+laDSEh3mD2PmeheI5k6Aw8nQ==
-  dependencies:
-    hoek "6.x.x"
-    isemail "3.x.x"
-    topo "3.x.x"
 
 joi@14.1.0:
   version "14.1.0"
