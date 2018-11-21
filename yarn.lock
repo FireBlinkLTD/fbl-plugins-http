@@ -189,10 +189,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.6.tgz#7fc213c1b811c90fc9a3edb6206742b95d697678"
   integrity sha512-+ZWB5Ec1iki99xQFzBlivlKxSZQ+fuUKBott8StBOnLN4dWbRHlgdg1XknpW6g0tweniN5DcOqA64CJyOUPSAw==
 
-"@types/node@10.12.9":
-  version "10.12.9"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.9.tgz#a07bfa74331471e1dc22a47eb72026843f7b95c8"
-  integrity sha512-eajkMXG812/w3w4a1OcBlaTwsFPO5F7fJ/amy+tieQxEMWBlbV1JGSjkFM+zkHNf81Cad+dfIRA+IBkvmvdAeA==
+"@types/node@10.12.10":
+  version "10.12.10"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.10.tgz#4fa76e6598b7de3f0cb6ec3abacc4f59e5b3a2ce"
+  integrity sha512-8xZEYckCbUVgK8Eg7lf5Iy4COKJ5uXlnIOnePN0WUwSQggy9tolM+tDJf7wMOnT/JT/W9xDYIaYggt3mRV2O5w==
 
 "@types/range-parser@*":
   version "1.2.2"
@@ -1127,10 +1127,10 @@ fast-json-stable-stringify@^2.0.0:
   resolved "https://registry.yarnpkg.com/fast-json-stable-stringify/-/fast-json-stable-stringify-2.0.0.tgz#d5142c0caee6b1189f87d3a76111064f86c8bbf2"
   integrity sha1-1RQsDK7msRifh9OnYREGT4bIu/I=
 
-fbl@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/fbl/-/fbl-1.1.1.tgz#a232c0347e60d7d999afce329684b6ed34915436"
-  integrity sha512-RogprKcX6Eqc/ZFUfxIuqGoAE5Drd5cIa1enSsuvpg59rEVHXU/h008qxzYQa312yxv7NM09XBT+RGSZVRvc9Q==
+fbl@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/fbl/-/fbl-1.1.2.tgz#d2535a905c4b8cd2fc2a9e87379cc62adcc89360"
+  integrity sha512-71p7pQZpVIUb9xqb3C3Jizv/pO7eavG/pEoArAQjpTGvWm/octcG6rkfEoxjDqLtmKZsHCKQ8kLydr4gzZrKfw==
   dependencies:
     cliui "4.1.0"
     colors "1.3.2"

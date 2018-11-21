@@ -1,3 +1,7 @@
+requires:
+  plugins:
+    '@fbl-plugins/http': '>=0.0.1'
+
 pipeline:
   ctx:
     '$.it':

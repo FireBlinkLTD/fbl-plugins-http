@@ -51,6 +51,7 @@ jobs:
 
       # test if plugin can be used with prod dependencies
       - run: yarn install --prod
+      - run: yarn add fbl
       - run: yarn fbl -p ~/repo/dist/index.js ./test/assets/dummy.flow.yml
 
       # store artifacts
