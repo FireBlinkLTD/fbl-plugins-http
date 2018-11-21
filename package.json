@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "colors": "1.3.2",
-    "fbl": "1.1.0",
+    "fbl": "1.1.1",
     "got": "9.3.2",
     "joi": "14.1.0",
     "reflect-metadata": "0.1.12",
