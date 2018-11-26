@@ -8,6 +8,7 @@ import {dirname} from 'path';
 import {promisify} from 'util';
 import {writeFile} from 'fs';
 import {URLSearchParams} from 'url';
+import {ResponseUtil} from '../../utils/ResponseUtil';
 
 export abstract class BaseJsonActionHandler extends ActionHandler {
     getMetadata(): IActionHandlerMetadata {
@@ -35,8 +36,8 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
         await super.validate(options, context, snapshot, parameters);
 
         if (options.request.body) {
-            if (options.request.body.upload) {
-                throw new Error('request.body.upload parameter is not allowed for JSON requests');
+            if (options.request.body.form) {
+                throw new Error('request.body.form parameter is not allowed for JSON requests');
             }
 
             if (options.request.body.file) {
@@ -55,7 +56,7 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
 
         const requestOptions = <GotJSONOptions> {
             headers: options.request.headers || {},
-            timeout: options.request.timeout || 60,
+            timeout: (options.request.timeout || 60) * 1000,
             json: true
         };
 
@@ -79,56 +80,24 @@ export abstract class BaseJsonActionHandler extends ActionHandler {
 
         /* istanbul ignore else */
         if (options.response) {
-            if (options.response.statusCode) {
-                if (options.response.statusCode.assignTo) {
-                    await ContextUtil.assignTo(
-                        context,
-                        parameters,
-                        snapshot,
-                        options.response.statusCode.assignTo,
-                        response.statusCode,
-                        options.response.statusCode.assignTo.override
-                    );
-                }
+            const responseAssignments = [
+                {config: options.response.statusCode, value: response.statusCode},
+                {config: options.response.headers, value: response.headers},
+                {config: options.response.body, value: response.body}
+            ];
 
-                if (options.response.statusCode.pushTo) {
-                    await ContextUtil.pushTo(
-                        context,
-                        parameters,
-                        snapshot,
-                        options.response.statusCode.pushTo,
-                        response.statusCode,
-                        options.response.statusCode.pushTo.children,
-                        options.response.statusCode.pushTo.override
-                    );
-                }
+            for (const assignment of responseAssignments) {
+                await ResponseUtil.assign(
+                    assignment.config,
+                    context,
+                    snapshot,
+                    parameters,
+                    assignment.value
+                );
             }
 
             /* istanbul ignore else */
             if (options.response.body) {
-                if (options.response.body.assignTo) {
-                    await ContextUtil.assignTo(
-                        context,
-                        parameters,
-                        snapshot,
-                        options.response.body.assignTo,
-                        response.body,
-                        options.response.body.assignTo.override
-                    );
-                }
-
-                if (options.response.body.pushTo) {
-                    await ContextUtil.pushTo(
-                        context,
-                        parameters,
-                        snapshot,
-                        options.response.body.pushTo,
-                        response.body,
-                        options.response.body.pushTo.children,
-                        options.response.body.pushTo.override
-                    );
-                }
-
                 if (options.response.body.saveTo) {
                     const path = FSUtil.getAbsolutePath(options.response.body.saveTo, snapshot.wd);
                     await FSUtil.mkdirp(dirname(path));

@@ -1,58 +1,39 @@
-# JSON Request Action Handlers
+# File Download/Upload Request Action Handlers
 
-Various action handlers that allow to make DELETE, GET, PATCH, POST, PUT requests with JSON payload and expect server 
-to return JSON response.
+Simple actions to download / upload files.
 
-**ID Pattern:** `com.fireblink.fbl.plugins.http.<action>.json` 
+## Download
+
+**ID:** com.fireblink.fbl.plugins.http.download
 
 **Aliases:**
-- `fbl.plugins.http.<action>.json`
-- `plugins.http.<action>.json`
-- `http.<action>.json`
-- `<action>.json`
-
-Where `<action>` can be one of the following:
-- delete
-- get
-- patch
-- post
-- put
-
-E.g: com.fireblink.fbl.plugins.http.**delete**.json
+- fbl.plugins.http.download
+- plugins.http.download
+- http.download
+- download
 
 **Example:**
 
 ```yaml
-get.json:
+download:  
   # [required] HTTP Request parameters
   request:
     # [required] url to make the request to    
     url: http://fireblink.com/endpoint
-    
+
     # [optional] query parameters either key-value pair or array of arrays. 
     # URLSearchParams are used to wrap the value - https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/URLSearchParams  
     query: 
       test: yes
-    
+
     # [optional] key-value pairs of additional HTTP request headers
     headers:
       authorization: Bearer XXXXXXXX
-    
-    # [optional] request body
-    body:   
-      # [optional] inline body value
-      # Note: either "inline" or "file" can be provided, but not both
-      inline: 
-        some_field: 1
-          
-      # [optional] file that hosts JSON payload to be send
-      # Note: either "inline" or "file" can be provided, but not both
-      file: /tmp/body.json
-      
+
     # [optional] request timeout in seconds. Default value - 1 minute.
     timeout: 600
-      
-  # [optional] HTTP Response parameters
+  
+  # [required] HTTP Response parameters
   response:
     # [optional] HTTP Response status code parameters
     statusCode: 
@@ -70,29 +51,14 @@ get.json:
         # [optional] "secrets" variable name to push status code to ("test")
         secrets: '$.test'
         # [optional] "parameters" variable name to push status code to ("test")
-        parameters: '$.test'      
-          
-    # [optional] HTTP Response headers parameters
-    headers: 
-      assignTo:
-        # [optional] "ctx" variable name to assign status code to ("test")
-        ctx: '$.test'
-        # [optional] "secrets" variable name to assign status code  to ("test")
-        secrets: '$.test'
-        # [optional] "parameters" variable name to assign status code to ("test")
-        parameters: '$.test'
-        
-      pushTo:
-        # [optional] "ctx" variable name to push status code to ("test")
-        ctx: '$.test'
-        # [optional] "secrets" variable name to push status code to ("test")
-        secrets: '$.test'
-        # [optional] "parameters" variable name to push status code to ("test")
-        parameters: '$.test'    
-        
-    # [optional] HTTP Response Body parameters
+        parameters: '$.test'         
+    
+    # [required] HTTP Response Body parameters
+    # Note: at least one of "assignTo", "pushTo" and "saveTo" fields is required
     body:
       assignTo:
+        # [required] value encoding - utf8, base64 or hex
+        encoding: 'utf8'
         # [optional] "ctx" variable name to assign response body to ("test")
         ctx: '$.test'
         # [optional] "secrets" variable name to assign response body  to ("test")
@@ -101,8 +67,10 @@ get.json:
         parameters: '$.test'
         # [optional] override object by given path instead of assigning values to
         override: true
-        
+    
       pushTo:
+        # [required] value encoding - utf8, base64 or hex
+        encoding: 'utf8'
         # [optional] "ctx" variable name to push response body to ("test")
         ctx: '$.test'
         # [optional] "secrets" variable name to push response body to ("test")
@@ -113,7 +81,8 @@ get.json:
         children: true
         # [optional] if there are some elements in array at given paths - they will be removed before assigning new value.
         override: true  
-        
+    
       # [optional] path to file to save the response body to
-      saveTo: /tmp/response.json               
+      saveTo: /tmp/response.json 
+
 ```

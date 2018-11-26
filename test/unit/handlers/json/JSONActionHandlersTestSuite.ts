@@ -202,14 +202,14 @@ class JSONActionHandlersTestSuite {
     }
 
     @test()
-    async failValidationOnUploadFileOption(): Promise<void> {
+    async failValidationOnFormOption(): Promise<void> {
         await JSONActionHandlersTestSuite.forEachAction(async (actionHandler: ActionHandler, type: string): Promise<void> => {
             const options = {
                 request: {
                     url: DummyServerWrapper.ENDPOINT + '/json',
                     body: {
                         file: 'file.json',
-                        upload: true
+                        form: true
                     }
                 }
             };
@@ -220,7 +220,7 @@ class JSONActionHandlersTestSuite {
             await chai.expect(
                 actionHandler.validate(options, context, snapshot, {})
             ).to.be.rejectedWith(
-                'request.body.upload parameter is not allowed for JSON requests'
+                'request.body.form parameter is not allowed for JSON requests'
             );
         });
     }

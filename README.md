@@ -6,6 +6,7 @@ Plugins allows to make all kinds of http requests and can be used to download/up
 
 ## Action Handlers
 
+- [File Upload/Download](docs/file.md)
 - [JSON HTTP Requests](docs/json.md)
 
 ## Integration

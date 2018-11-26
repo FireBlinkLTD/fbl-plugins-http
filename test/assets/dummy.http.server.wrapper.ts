@@ -1,4 +1,5 @@
 import {ChildProcess, fork} from 'child_process';
+import {join} from 'path';
 
 export class DummyServerWrapper {
     public static ENDPOINT = 'http://localhost:3000';
@@ -13,8 +14,8 @@ export class DummyServerWrapper {
     async start(): Promise<void> {
         await this.stop();
 
-        this.server = fork('server/', [], {
-            cwd: __dirname,
+        this.server = fork('index.js', [], {
+            cwd: join(__dirname, 'server') ,
             silent: true
         });
 

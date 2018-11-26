@@ -12,10 +12,17 @@ const FBL_PLUGIN_HTTP_REQUEST_SCHEMA = Joi.object({
     body: Joi.object({
         inline: Joi.alternatives(Joi.string(), Joi.object(), Joi.number(), Joi.array()),
         file: Joi.string(),
-        upload: Joi.boolean()
-    }),
+        form: Joi.boolean()
+    })
+        .options({
+            allowUnknown: false,
+            abortEarly: true
+        }),
 
     timeout: Joi.number()
+}).options({
+    allowUnknown: false,
+    abortEarly: true
 });
 
 export {FBL_PLUGIN_HTTP_REQUEST_SCHEMA};

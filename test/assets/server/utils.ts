@@ -1,5 +1,10 @@
 const processSend = (name: string, payload?: any) => {
-    process.send({name, payload});
+    if (process.send) {
+        process.send({
+            name,
+            payload
+        });
+    }
 };
 
 export {processSend};

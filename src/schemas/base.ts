@@ -7,6 +7,9 @@ const FBL_PLUGIN_HTTP_BASE_SCHEMA = Joi.object({
     response: FBL_PLUGIN_HTTP_RESPONSE_SCHEMA,
 })
     .required()
-    .options({abortEarly: true});
+    .options({
+        abortEarly: true,
+        allowUnknown: false
+    });
 
 export {FBL_PLUGIN_HTTP_BASE_SCHEMA};
