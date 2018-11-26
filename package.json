@@ -30,7 +30,7 @@
     "fbl": ">=1.2.0"
   },
   "devDependencies": {
-    "fbl": "1.2.0",
+    "fbl": "1.2.1",
     "@types/body-parser": "1.17.0",
     "@types/express": "4.16.0",
     "@types/got": "9.2.0",
