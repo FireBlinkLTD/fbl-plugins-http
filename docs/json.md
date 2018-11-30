@@ -20,10 +20,10 @@ Where `<action>` can be one of the following:
 
 E.g: com.fireblink.fbl.plugins.http.**delete**.json
 
-**Example:**
+**Example 1:**
 
 ```yaml
-get.json:
+post.json:
   # [required] HTTP Request parameters
   request:
     # [required] url to make the request to    
@@ -114,6 +114,64 @@ get.json:
         # [optional] if there are some elements in array at given paths - they will be removed before assigning new value.
         override: true  
         
+      # [optional] path to file to save the response body to
+      saveTo: /tmp/response.json               
+```
+
+**Example 1:**
+
+```yaml
+post.json:
+  # [required] HTTP Request
+  request:
+    # [required] url to make the request to    
+    url: http://fireblink.com/endpoint
+    
+    # [optional] query parameters either key-value pair or array of arrays. 
+    # URLSearchParams are used to wrap the value - https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/URLSearchParams  
+    query: 
+      test: yes
+    
+    # [optional] key-value pairs of additional HTTP request headers
+    headers:
+      authorization: Bearer XXXXXXXX
+    
+    # [optional] request body
+    body:   
+      # [optional] inline body value
+      # Note: either "inline" or "file" can be provided, but not both
+      inline: 
+        some_field: 1
+          
+      # [optional] file that hosts JSON payload to be send
+      # Note: either "inline" or "file" can be provided, but not both
+      file: /tmp/body.json
+      
+    # [optional] request timeout in seconds. Default value - 1 minute.
+    timeout: 600
+      
+  # [optional] HTTP Response
+  response:
+    # [optional] HTTP Response status code
+    statusCode: 
+      # [optional] assign response status code to context field
+      assignTo: '$.ctx.test'        
+      # [optional] push response status code to context field
+      pushTo: '$.ctx.test'
+          
+    # [optional] HTTP Response headers
+    headers: 
+      # [optional] assign response headers to context field          
+      assignTo: '$.ctx.test'        
+      # [optional] push response headers to context field
+      pushTo: '$.ctx.test'
+        
+    # [optional] HTTP Response body
+    body:
+      # [optional] assign response body to context field
+      assignTo: '$.ctx.test'  
+      # [optional] push response body to context field      
+      pushTo: '$.ctx.test'        
       # [optional] path to file to save the response body to
       saveTo: /tmp/response.json               
 ```
