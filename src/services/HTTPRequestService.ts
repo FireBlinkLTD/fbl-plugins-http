@@ -14,6 +14,7 @@ import { IContext, IDelegatedParameters } from 'fbl/dist/src/interfaces';
 import { ResponseUtil } from '../utils/ResponseUtil';
 import { FlowService } from 'fbl/dist/src/services';
 import { lookup } from 'mime-types';
+import { RequestUtil } from '../utils/RequestUtil';
 
 @Service()
 export class HTTPRequestService {
@@ -209,17 +210,6 @@ export class HTTPRequestService {
     }
 
     /**
-     * Check if header exists
-     * @param options
-     * @param name 
-     */
-    private static isHeaderExists(options: got.GotOptions<any>, name: string) {
-        return Object.keys(options.headers)
-            .map(key => key.toLowerCase())
-            .indexOf(name.toLowerCase()) >= 0;
-    }
-
-    /**
      * Prepare request options for 'got' module.
      * @param {IContext} context
      * @param {ActionSnapshot} snapshot
@@ -241,7 +231,7 @@ export class HTTPRequestService {
             timeout: (requestOptions.timeout || 60) * 1000
         };
 
-        if (!HTTPRequestService.isHeaderExists(options, 'user-agent')) {
+        if (!RequestUtil.isHeaderExists(options.headers, 'user-agent')) {
             options.headers['user-agent'] = 'fbl/http (https://fbl.fireblink.com)';
         }
 
@@ -251,22 +241,28 @@ export class HTTPRequestService {
 
         if (requestOptions.body) {
             if (requestOptions.body.form) {
-                const form = new FormData();
+                const contentType = RequestUtil.getHeader(requestOptions.headers, 'content-type');
+                if (contentType && contentType.toString().toLowerCase() === 'application/x-www-form-urlencoded') {
+                    (options as got.GotFormOptions<any>).form = true;
+                    (options as got.GotFormOptions<any>).body = requestOptions.body.form.fields || {};
+                } else {
+                    const form = new FormData();
 
-                if (requestOptions.body.form.fields) {
-                    for (const key of Object.keys(requestOptions.body.form.fields)) {
-                        form.append(key, requestOptions.body.form.fields[key].toString());
+                    if (requestOptions.body.form.fields) {
+                        for (const key of Object.keys(requestOptions.body.form.fields)) {
+                            form.append(key, requestOptions.body.form.fields[key].toString());
+                        }
                     }
-                }
-
-                if (requestOptions.body.form.files) {
-                    for (const key of Object.keys(requestOptions.body.form.files)) {
-                        const path = FSUtil.getAbsolutePath(requestOptions.body.form.files[key], snapshot.wd);
-                        form.append(key, createReadStream(path));
+    
+                    if (requestOptions.body.form.files) {
+                        for (const key of Object.keys(requestOptions.body.form.files)) {
+                            const path = FSUtil.getAbsolutePath(requestOptions.body.form.files[key], snapshot.wd);
+                            form.append(key, createReadStream(path));
+                        }
                     }
-                }
-
-                (options as got.GotBodyOptions<any>).body = form;
+    
+                    (options as got.GotBodyOptions<any>).body = form;
+                }                
             }
 
             if (requestOptions.body.json) {
@@ -286,7 +282,7 @@ export class HTTPRequestService {
                 
                 // find out absolute path
                 path = FSUtil.getAbsolutePath(path, snapshot.wd);
-                if (!HTTPRequestService.isHeaderExists(options, 'content-type')) {
+                if (!RequestUtil.isHeaderExists(options.headers, 'content-type')) {
                     options.headers['content-type'] = lookup(path) || 'application/octet-stream';
                 } 
 

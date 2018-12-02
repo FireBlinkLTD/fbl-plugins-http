@@ -5,6 +5,8 @@ import { IActionHandlerMetadata, IDelegatedParameters, IContext } from 'fbl/dist
 import { FSUtil } from 'fbl/dist/src/utils';
 import Container from 'typedi';
 import { HTTPRequestService } from '../services';
+import { request } from 'http';
+import { RequestUtil } from '../utils/RequestUtil';
 
 export class HTTPRequestActionHandler extends ActionHandler {
     private static metadata = <IActionHandlerMetadata> {
@@ -69,7 +71,13 @@ export class HTTPRequestActionHandler extends ActionHandler {
                 }
             }
 
-            if (options.request.body.form && options.request.body.form.files) {
+            if (options.request.body.form && options.request.body.form.files && Object.keys(options.request.body.form.files).length) {
+                if (options.request.headers) {
+                    const contentType = RequestUtil.getHeader(options.request.headers, 'content-type');
+                    if (contentType && contentType.toString().toLowerCase() === 'application/x-www-form-urlencoded') {
+                        throw new Error('Unable to use "x-www-form-urlencoded" with files.');
+                    }
+                }
                 for (const fieldName of Object.keys(options.request.body.form.files)) {
                     await this.validateFileExistance(options.request.body.form.files[fieldName], snapshot.wd);                    
                 }

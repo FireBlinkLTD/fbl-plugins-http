@@ -24,8 +24,8 @@ const FBL_PLUGIN_HTTP_REQUEST_SCHEMA = Joi.object()
                 /.+/,
                 Joi.alternatives(
                     Joi.string(), 
-                    Joi.number(), 
-                    Joi.boolean()
+                    Joi.number(),  
+                    Joi.boolean()                  
                 )
             ),
         body: Joi.object()
@@ -37,15 +37,15 @@ const FBL_PLUGIN_HTTP_REQUEST_SCHEMA = Joi.object()
                                 /.+/, 
                                 Joi.alternatives(
                                     Joi.string(), 
-                                    Joi.boolean(), 
-                                    Joi.number()
+                                    Joi.number(),
+                                    Joi.array().items(Joi.string()).min(1)
                                 )
                             ),
                         files: Joi.object()
                             .pattern(
                                 /.+/, 
                                 Joi.string().min(1)
-                            )
+                            )                        
                     }),
                 
                 json: Joi.any(),

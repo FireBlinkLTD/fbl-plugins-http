@@ -16,7 +16,7 @@ const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
 @suite()
-class JSONActionHandlersTestSuite {
+class JSONATestSuite {
     async after(): Promise<void> {
         Container.reset();
     }
@@ -31,7 +31,7 @@ class JSONActionHandlersTestSuite {
 
     @test()
     async assignResponseTo(): Promise<void> {
-        await JSONActionHandlersTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
+        await JSONATestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
             const options = {
                 request: <IHTTPRequestOptions> {
                     url: DummyServerWrapper.ENDPOINT + '/json',
@@ -74,12 +74,15 @@ class JSONActionHandlersTestSuite {
             assert.deepStrictEqual(context.ctx.response.body.method, method);
             assert.deepStrictEqual(context.ctx.response.body.query, options.request.query);
             assert.strictEqual(context.ctx.response.body.headers['x-test'], '1234');
+            assert.deepStrictEqual(context.ctx.response.body.body, {
+                test: true
+            });
         });
     }
 
     @test()
     async pushResponseTo(): Promise<void> {
-        await JSONActionHandlersTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
+        await JSONATestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
             const options = {
                 request: <IHTTPRequestOptions> {
                     url: DummyServerWrapper.ENDPOINT + '/json',
@@ -132,19 +135,13 @@ class JSONActionHandlersTestSuite {
     async saveResponseToFile(): Promise<void> {
         const tempPathRegistry = Container.get(TempPathsRegistry);
 
-        await JSONActionHandlersTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
+        await JSONATestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
             const file = await tempPathRegistry.createTempFile();
 
             const options = {
                 request: <IHTTPRequestOptions> {
                     url: DummyServerWrapper.ENDPOINT + '/json',
-                    method: method,
-                    // TODO: figure out why POST, PUT, PATCH without body hangs
-                    // body: {
-                    //     json: {
-                    //         test: true
-                    //     }
-                    // }
+                    method: method        
                 },
                 response: <IHTTPResponseOptions> {
                     body: {
@@ -170,7 +167,7 @@ class JSONActionHandlersTestSuite {
         const file = await tempPathRegistry.createTempFile(false, '.json');
         await promisify(writeFile)(file, JSON.stringify({file: true}), 'utf8');
 
-        await JSONActionHandlersTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
+        await JSONATestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
             const options = {
                 request: <IHTTPRequestOptions> {
                     url: DummyServerWrapper.ENDPOINT + '/json',
@@ -215,7 +212,7 @@ class JSONActionHandlersTestSuite {
         const file = await tempPathRegistry.createTempFile(false, '.json');
         await promisify(writeFile)(file, JSON.stringify({file: '<%- ctx.test %>'}), 'utf8');
 
-        await JSONActionHandlersTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
+        await JSONATestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
             const options = {
                 request: <IHTTPRequestOptions> {
                     url: DummyServerWrapper.ENDPOINT + '/json',
