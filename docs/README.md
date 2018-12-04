@@ -111,3 +111,8 @@ http:
             saveTo: /tmp/reponse.body.bin
 ```
 
+## Examples
+
+* [JSON Rest API](examples/rest.md)
+* [URLEncoded Form Submission](examples/urlencoded.md)
+* [Multipart Form Submission](examples/multipart.md)
