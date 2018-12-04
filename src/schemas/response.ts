@@ -1,34 +1,49 @@
 import * as Joi from 'joi';
-import {FBL_ASSIGN_TO_SCHEMA, FBL_PUSH_TO_SCHEMA} from 'fbl/dist/src/schemas';
+import {
+    FBL_ASSIGN_TO_SCHEMA, 
+    FBL_PUSH_TO_SCHEMA,
+    FBL_ASSIGN_TO_OBJECT_SCHEMA,
+    FBL_ASSIGN_TO_STRING_SCHEMA,
+    FBL_PUSH_TO_STRING_SCHEMA,
+    FBL_PUSH_TO_OBJECT_SCHEMA
+} from 'fbl/dist/src/schemas';
 
-const FBL_PLUGIN_HTTP_RESPONSE_SCHEMA = Joi.object({
-    statusCode: Joi.object({
-        assignTo: FBL_ASSIGN_TO_SCHEMA,
-        pushTo: FBL_PUSH_TO_SCHEMA
+const FBL_PLUGIN_HTTP_RESPONSE_SCHEMA = Joi.object()
+    .keys({
+        statusCode: Joi.object()
+            .keys({
+                assignTo: FBL_ASSIGN_TO_SCHEMA,
+                pushTo: FBL_PUSH_TO_SCHEMA
+            }).min(1),
+        
+        headers: Joi.object()
+            .keys({
+                assignTo: FBL_ASSIGN_TO_SCHEMA,
+                pushTo: FBL_PUSH_TO_SCHEMA
+            }).min(1),
+        
+        body: Joi.object()
+            .keys({
+                assignTo: Joi.alternatives(
+                    FBL_ASSIGN_TO_STRING_SCHEMA,
+                    FBL_ASSIGN_TO_OBJECT_SCHEMA.keys({
+                        as: Joi.string().allow('base64', 'hex', 'utf8', 'json')
+                    })
+                ),
+                pushTo: Joi.alternatives(
+                    FBL_PUSH_TO_STRING_SCHEMA,
+                    FBL_PUSH_TO_OBJECT_SCHEMA.keys({
+                        as: Joi.string().allow('base64', 'hex', 'utf8', 'json')
+                    })
+                ),
+                saveTo: Joi.string().min(1)
+            })
     })
-        .options({
-            allowUnknown: false
-        })
-        .or('assignTo', 'pushTo'),
+    .options({
+        allowUnknown: false,
+        abortEarly: true
+    });
 
-    headers:  Joi.object({
-        assignTo: FBL_ASSIGN_TO_SCHEMA,
-        pushTo: FBL_PUSH_TO_SCHEMA
-    })
-        .options({
-            allowUnknown: false
-        })
-        .or('assignTo', 'pushTo'),
-
-    body: Joi.object({
-        assignTo: FBL_ASSIGN_TO_SCHEMA,
-        pushTo: FBL_PUSH_TO_SCHEMA,
-        saveTo: Joi.string()
-    })
-        .options({
-            allowUnknown: false
-        })
-        .or('assignTo', 'pushTo', 'saveTo')
-});
-
-export {FBL_PLUGIN_HTTP_RESPONSE_SCHEMA};
+export {    
+    FBL_PLUGIN_HTTP_RESPONSE_SCHEMA
+};

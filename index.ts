@@ -1,11 +1,6 @@
 import {IPlugin} from "fbl/dist/src/interfaces";
 import {
-    FileDownloadActionHandler,
-    DeleteJSONActionHandler,
-    GetJSONActionHandler,
-    PatchJSONActionHandler,
-    PostJSONActionHandler,
-    PutJSONActionHandler
+  HTTPRequestActionHandler
 } from './src/handlers';
 
 const packageJson = require('../package.json');
@@ -30,13 +25,7 @@ module.exports = <IPlugin> {
   reporters: [],
 
   actionHandlers: [
-      new FileDownloadActionHandler(),
-
-      new DeleteJSONActionHandler(),
-      new GetJSONActionHandler(),
-      new PatchJSONActionHandler(),
-      new PostJSONActionHandler(),
-      new PutJSONActionHandler(),
+      new HTTPRequestActionHandler()
   ],
 
   templateUtils: []

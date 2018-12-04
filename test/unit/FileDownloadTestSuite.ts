@@ -1,27 +1,28 @@
 import {suite, test} from 'mocha-typescript';
-import {DummyServerWrapper} from '../../../assets/dummy.http.server.wrapper';
+import {DummyServerWrapper} from '../assets/dummy.http.server.wrapper';
 import {Container} from 'typedi';
 import {TempPathsRegistry} from 'fbl/dist/src/services';
 import {basename, dirname, resolve} from 'path';
 import {ContextUtil, FSUtil} from 'fbl/dist/src/utils';
 import {ActionSnapshot} from 'fbl/dist/src/models';
 import * as assert from 'assert';
-import {FileDownloadActionHandler} from '../../../../src/handlers/file';
+import { HTTPRequestActionHandler } from '../../src/handlers';
+import { IHTTPRequestOptions, IHTTPResponseOptions } from '../../src/interfaces';
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
 @suite()
-class FileDownloadActionHandlerTestSuite {
-
+class FileDownloadTestSuite {
     @test()
     async downloadFile(): Promise<void> {
-        const targetFile = await Container.get(TempPathsRegistry).createTempFile();
+        const targetFile = await Container.get(TempPathsRegistry).createTempFile();    
 
         const options = {
             request: {
                 url: DummyServerWrapper.ENDPOINT + '/static/file.txt',
+                method: 'GET',
                 query: {
                     test: 'yes'
                 },
@@ -43,12 +44,17 @@ class FileDownloadActionHandlerTestSuite {
                 },
 
                 body: {
+                    assignTo: '$.ctx.assigned',
+                    pushTo: {
+                        ctx: '$.pushed',
+                        as: 'hex'
+                    },
                     saveTo: basename(targetFile)
                 }
             }
         };
 
-        const actionHandler = new FileDownloadActionHandler();
+        const actionHandler = new HTTPRequestActionHandler();
 
         const context = ContextUtil.generateEmptyContext();
         const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(targetFile), 0, {});
@@ -64,32 +70,35 @@ class FileDownloadActionHandlerTestSuite {
         assert.strictEqual(request.headers['x-test'], '1234');
 
         const actual = await FSUtil.readTextFile(targetFile);
-        const expected = await FSUtil.readTextFile(resolve(__dirname, '../../../../../test/assets/server/static/file.txt'));
+        const expected = await FSUtil.readTextFile(resolve(__dirname, '../../../test/assets/server/static/file.txt'));
         assert.strictEqual(actual, expected);
+        assert.strictEqual(context.ctx.assigned, new Buffer(expected).toString('base64'));
+        assert.deepStrictEqual(context.ctx.pushed, [new Buffer(expected).toString('hex')]); 
     }
 
     @test()
     async downloadFileToContext(): Promise<void> {
         const options = {
-            request: {
-                url: DummyServerWrapper.ENDPOINT + '/static/file.txt'
+            request: <IHTTPRequestOptions> {
+                url: DummyServerWrapper.ENDPOINT + '/static/file.txt',
+                method: 'GET',
             },
-            response: {
+            response: <IHTTPResponseOptions> {
                 body: {
                     assignTo: {
                         ctx: '$.response.body',
-                        encoding: 'utf8'
+                        as: 'utf8'
                     },
 
                     pushTo: {
                         ctx: '$.response.body[]',
-                        encoding: 'utf8'
+                        as: 'utf8'
                     },
                 }
             }
         };
 
-        const actionHandler = new FileDownloadActionHandler();
+        const actionHandler = new HTTPRequestActionHandler();
 
         const context = ContextUtil.generateEmptyContext();
         const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
@@ -97,37 +106,9 @@ class FileDownloadActionHandlerTestSuite {
         await actionHandler.validate(options, context, snapshot, {});
         await actionHandler.execute(options, context, snapshot, {});
 
-        const expected = await FSUtil.readTextFile(resolve(__dirname, '../../../../../test/assets/server/static/file.txt'));
+        const expected = await FSUtil.readTextFile(resolve(__dirname, '../../../test/assets/server/static/file.txt'));
         assert.strictEqual(context.ctx.response.body, expected);
         assert.strictEqual(context.ctx.response['body[]'][0], expected);
-    }
-
-    @test()
-    async failOnRequestBody(): Promise<void> {
-        const options = {
-            request: {
-                url: DummyServerWrapper.ENDPOINT + '/static/file.txt',
-                body: {
-                    inline: {
-                        test: true
-                    }
-                }
-            },
-            response: {
-                body: {
-                    saveTo: 'file.txt'
-                }
-            }
-        };
-
-        const actionHandler = new FileDownloadActionHandler();
-
-        const context = ContextUtil.generateEmptyContext();
-        const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
-
-        await chai.expect(
-            actionHandler.validate(options, context, snapshot, {})
-        ).to.be.rejectedWith('request.body configuration is not allowed for file download requests');
     }
 
     @test()
@@ -135,8 +116,9 @@ class FileDownloadActionHandlerTestSuite {
         const targetFile = await Container.get(TempPathsRegistry).createTempFile();
 
         const options = {
-            request: {
+            request: <IHTTPRequestOptions> {
                 url: DummyServerWrapper.ENDPOINT + '/static/missing.txt',
+                method: 'GET',
                 query: {
                     test: 'yes'
                 },
@@ -144,11 +126,9 @@ class FileDownloadActionHandlerTestSuite {
                     'X-Test': '1234'
                 }
             },
-            response: {
+            response: <IHTTPResponseOptions> {
                 statusCode: {
-                    assignTo: {
-                        ctx: '$.response.code'
-                    }
+                    assignTo: '$.ctx.response.code'                        
                 },
 
                 headers: {
@@ -163,7 +143,7 @@ class FileDownloadActionHandlerTestSuite {
             }
         };
 
-        const actionHandler = new FileDownloadActionHandler();
+        const actionHandler = new HTTPRequestActionHandler();
 
         const context = ContextUtil.generateEmptyContext();
         const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(targetFile), 0, {});

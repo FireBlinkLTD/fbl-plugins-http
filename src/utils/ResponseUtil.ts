@@ -1,22 +1,12 @@
 import {ContextUtil} from 'fbl/dist/src/utils';
 import {IContext, IDelegatedParameters} from 'fbl/dist/src/interfaces';
 import {ActionSnapshot} from 'fbl/dist/src/models';
-
-interface IAssignToContextConfig {
-    ctx?: string;
-    secrets?: string;
-    parameters?: string;
-    override?: boolean;
-}
-
-interface IPushToContextConfig extends IAssignToContextConfig {
-    children?: boolean;
-}
+import { IAssignTo, IPushTo } from '../interfaces';
 
 
 interface IAssignContextConfig {
-    assignTo?: IAssignToContextConfig;
-    pushTo?: IPushToContextConfig;
+    assignTo?: IAssignTo | string;
+    pushTo?: IPushTo | string;
 }
 
 export class ResponseUtil {
@@ -47,40 +37,54 @@ export class ResponseUtil {
     }
 
     static async assignTo(
-        config: IAssignToContextConfig,
+        config: IAssignTo | string,
         context: IContext,
         snapshot: ActionSnapshot,
         parameters: IDelegatedParameters,
         value: any
     ) {
         if (value !== undefined && config) {
+            let override = false;
+
+            if (typeof config !== 'string') {
+                override = config.override;
+            }
+
             await ContextUtil.assignTo(
                 context,
                 parameters,
                 snapshot,
                 config,
                 value,
-                config.override
+                override
             );
         }
     }
 
     static async pushTo(
-        config: IPushToContextConfig,
+        config: IPushTo | string,
         context: IContext,
         snapshot: ActionSnapshot,
         parameters: IDelegatedParameters,
         value: any
     ) {
         if (value !== undefined && config) {
+            let override = false;
+            let children = false;
+
+            if (typeof config !== 'string') {
+                override = config.override;
+                children = config.children;
+            }
+
             await ContextUtil.pushTo(
                 context,
                 parameters,
                 snapshot,
                 config,
                 value,
-                config.children,
-                config.override
+                children,
+                override
             );
         }
     }

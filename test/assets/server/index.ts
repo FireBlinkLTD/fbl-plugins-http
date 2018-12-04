@@ -1,16 +1,16 @@
 import * as express from 'express';
-import {JSONRouter} from './json.router';
+import {EchoRouter} from './echo.router';
 import {processSend} from './utils';
 import {json, urlencoded} from 'body-parser';
 import {join} from 'path';
+import { Form } from 'multiparty';
 
 const app = express();
 const port = 3000;
 
-app.use(json());
-app.use(urlencoded());
-
 app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.log(`-> Received ${req.method} request on ${req.path}`);
+    
     res.header('x-request', JSON.stringify({
         query: req.query,
         body: req.body,
@@ -27,7 +27,20 @@ app.use(
     )
 );
 
-app.use('/json', JSONRouter);
+app.use('/json', json(), EchoRouter);
+app.use('/form/urlencoded', urlencoded(), EchoRouter);
+app.use('/form/multipart', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const form = new Form();
+ 
+    form.parse(req, function(err: Error, fields: any, files: any) {
+        if (err) {
+            return next(err);
+        }
+
+        req.body = {fields, files};
+        next();
+    });
+}, EchoRouter);
 
 app.listen(port, (err: Error) => {
     if (err) {
