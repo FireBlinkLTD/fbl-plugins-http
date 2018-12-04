@@ -4,11 +4,6 @@
 
 Plugins allows to make all kinds of http requests and can be used to download/upload files, submit forms or to integrate with REST services.
 
-## Action Handlers
-
-- [File Upload/Download](docs/file.md)
-- [JSON HTTP Requests](docs/json.md)
-
 ## Integration
 
 There are multiple ways how plugin can be integrated into your flow.
@@ -54,3 +49,7 @@ requires:
 pipeline:
   # your flow goes here
 ```
+
+## Documentation
+
+Read more [here](docs/README.md).

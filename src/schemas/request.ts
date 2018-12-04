@@ -28,6 +28,7 @@ const FBL_PLUGIN_HTTP_REQUEST_SCHEMA = Joi.object()
                     Joi.boolean()                  
                 )
             ),
+            
         body: Joi.object()
             .keys({
                 form: Joi.object()

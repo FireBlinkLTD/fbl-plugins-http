@@ -14,6 +14,7 @@ export class HTTPRequestActionHandler extends ActionHandler {
         aliases: [
             'fbl.plugins.http.request',
             'http.request',
+            'http'
         ]
     };
 
@@ -50,7 +51,7 @@ export class HTTPRequestActionHandler extends ActionHandler {
     private async validateFileExistance(path: string, wd: string): Promise<void> {
         path = FSUtil.getAbsolutePath(path, wd);
         const exists = await FSUtil.exists(path);   
-             
+
         if (!exists) {
             throw new Error(`Unable to locate file at path: ${path}`);
         }
