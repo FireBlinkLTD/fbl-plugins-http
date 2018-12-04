@@ -3,6 +3,7 @@ import {EchoRouter} from './echo.router';
 import {processSend} from './utils';
 import {json, urlencoded} from 'body-parser';
 import {join} from 'path';
+import { Form } from 'multiparty';
 
 const app = express();
 const port = 3000;
@@ -26,11 +27,20 @@ app.use(
     )
 );
 
-app.use(json());
-app.use('/json', EchoRouter);
+app.use('/json', json(), EchoRouter);
+app.use('/form/urlencoded', urlencoded(), EchoRouter);
+app.use('/form/multipart', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const form = new Form();
+ 
+    form.parse(req, function(err: Error, fields: any, files: any) {
+        if (err) {
+            return next(err);
+        }
 
-app.use(urlencoded());
-app.use('/form', EchoRouter);
+        req.body = {fields, files};
+        next();
+    });
+}, EchoRouter);
 
 app.listen(port, (err: Error) => {
     if (err) {

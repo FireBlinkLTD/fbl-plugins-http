@@ -17,7 +17,7 @@ chai.use(chaiAsPromised);
 class FileDownloadTestSuite {
     @test()
     async downloadFile(): Promise<void> {
-        const targetFile = await Container.get(TempPathsRegistry).createTempFile();
+        const targetFile = await Container.get(TempPathsRegistry).createTempFile();    
 
         const options = {
             request: {
@@ -44,6 +44,11 @@ class FileDownloadTestSuite {
                 },
 
                 body: {
+                    assignTo: '$.ctx.assigned',
+                    pushTo: {
+                        ctx: '$.pushed',
+                        as: 'hex'
+                    },
                     saveTo: basename(targetFile)
                 }
             }
@@ -67,6 +72,8 @@ class FileDownloadTestSuite {
         const actual = await FSUtil.readTextFile(targetFile);
         const expected = await FSUtil.readTextFile(resolve(__dirname, '../../../test/assets/server/static/file.txt'));
         assert.strictEqual(actual, expected);
+        assert.strictEqual(context.ctx.assigned, new Buffer(expected).toString('base64'));
+        assert.deepStrictEqual(context.ctx.pushed, [new Buffer(expected).toString('hex')]); 
     }
 
     @test()

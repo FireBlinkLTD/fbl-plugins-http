@@ -5,8 +5,11 @@ export interface IHTTPRequestOptions {
     headers?: {[key: string]: number | string | string[]};
     body?: {
         form?: {
-            fields?: {[key: string]: string | boolean | number};
-            files?: {[key: string]: string};
+            multipart?: {
+                fields?: {[key: string]: string | boolean | number};
+                files?: {[key: string]: string};
+            };
+            urlencoded?: {[key: string]: string | boolean | number};
         },
         json?: any;
         file?: string | {

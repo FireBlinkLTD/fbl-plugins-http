@@ -8,7 +8,7 @@ import * as assert from 'assert';
 import {TempPathsRegistry} from 'fbl/dist/src/services';
 import {basename, dirname} from 'path';
 import {promisify} from 'util';
-import {writeFile} from 'fs';
+import {writeFile, readFile} from 'fs';
 import { IHTTPRequestOptions, IHTTPResponseOptions } from '../../src/interfaces';
 
 const chai = require('chai');
@@ -16,7 +16,7 @@ const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 
 @suite()
-class URLEncodedFormTestSuite {
+class MultipartFormTestSuite {
     async after(): Promise<void> {
         Container.reset();
     }
@@ -31,22 +31,23 @@ class URLEncodedFormTestSuite {
 
     @test()
     async assignResponseTo(): Promise<void> {
-        await URLEncodedFormTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
+        await MultipartFormTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
             const options = {
                 request: <IHTTPRequestOptions> {
-                    url: DummyServerWrapper.ENDPOINT + '/form/urlencoded',
+                    url: DummyServerWrapper.ENDPOINT + '/form/multipart',
                     method: method,
                     query: {
                         test: 'yes'
                     },
                     headers: {
-                        'X-Test': '1234',
-                        'content-type': 'application/x-www-form-urlencoded'
+                        'X-Test': '1234'            
                     },
                     body: {
                         form: {
-                            urlencoded: {
-                                test: 'form'
+                            multipart: {
+                                fields: {
+                                    test: 'form'
+                                }
                             }
                         }
                     }
@@ -78,28 +79,46 @@ class URLEncodedFormTestSuite {
             assert.deepStrictEqual(context.ctx.response.body.query, options.request.query);
             assert.strictEqual(context.ctx.response.body.headers['x-test'], '1234');
             assert.deepStrictEqual(context.ctx.response.body.body, {
-                test: 'form'
+                fields: {
+                    test: ['form']
+                },
+                files: {}
             });
         });
     }
 
     @test()
     async pushResponseTo(): Promise<void> {
-        await URLEncodedFormTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
+        const tempPathsRegistry = Container.get(TempPathsRegistry);
+        const tempFile = await tempPathsRegistry.createTempFile();
+
+        let content = '';
+        for (let i = 0; i < 10 * 1024; i++) {
+            content += 'test';
+        }
+        
+        await promisify(writeFile)(tempFile, content, 'utf8');
+
+        await MultipartFormTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
             const options = {
                 request: <IHTTPRequestOptions> {
-                    url: DummyServerWrapper.ENDPOINT + '/form/urlencoded',
+                    url: DummyServerWrapper.ENDPOINT + '/form/multipart',
                     method: method,
                     query: {
                         test: 'yes'
                     },
                     headers: {
-                        'X-Test': '1234'                        
+                        'X-Test': '1234'
                     },
                     body: {
                         form: {
-                            urlencoded: {                            
-                                test: 'form'
+                            multipart: {
+                                fields: {
+                                    test: 'form'
+                                },
+                                files: {
+                                    ft: basename(tempFile)
+                                }
                             }
                         }
                     }
@@ -119,7 +138,7 @@ class URLEncodedFormTestSuite {
             };
 
             const context = ContextUtil.generateEmptyContext();
-            const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
+            const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(tempFile), 0, {});
 
             await actionHandler.validate(options, context, snapshot, {});
             await actionHandler.execute(options, context, snapshot, {});
@@ -128,58 +147,15 @@ class URLEncodedFormTestSuite {
             assert.deepStrictEqual(context.ctx.response.body[0].method, method);
             assert.deepStrictEqual(context.ctx.response.body[0].query, options.request.query);
             assert.strictEqual(context.ctx.response.body[0].headers['x-test'], '1234');
-            assert.deepStrictEqual(context.ctx.response.body[0].body, {
-                test: 'form'
+            assert.deepStrictEqual(context.ctx.response.body[0].body.fields, {
+                    test: ['form']                
             });
-        });
-    }
 
-    @test()
-    async emptyForm(): Promise<void> {
-        await URLEncodedFormTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
-            const options = {
-                request: <IHTTPRequestOptions> {
-                    url: DummyServerWrapper.ENDPOINT + '/form/urlencoded',
-                    method: method,
-                    query: {
-                        test: 'yes'
-                    },
-                    headers: {
-                        'X-Test': '1234'            
-                    },
-                    body: {
-                        form: {
-                            urlencoded: {}
-                        }
-                    }
-                },
-                response: <IHTTPResponseOptions> {
-                    statusCode: {
-                        assignTo: {
-                            ctx: '$.response.code'
-                        }
-                    },
-    
-                    body: {
-                        assignTo: {
-                            ctx: '$.response.body',
-                            as: 'json' 
-                        }                    
-                    }
-                }
-            };
-
-            const context = ContextUtil.generateEmptyContext();
-            const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
-
-            await actionHandler.validate(options, context, snapshot, {});
-            await actionHandler.execute(options, context, snapshot, {});
-        
-            assert.strictEqual(context.ctx.response.code, 200);
-            assert.deepStrictEqual(context.ctx.response.body.method, method);
-            assert.deepStrictEqual(context.ctx.response.body.query, options.request.query);
-            assert.strictEqual(context.ctx.response.body.headers['x-test'], '1234');
-            assert.deepStrictEqual(context.ctx.response.body.body, {});
+            assert.strictEqual(context.ctx.response.body[0].body.files.ft.length, 1);
+            assert.strictEqual(context.ctx.response.body[0].body.files.ft[0].size, content.length);
+            
+            const actualContent = await promisify(readFile)(context.ctx.response.body[0].body.files.ft[0].path, 'utf8');
+            assert.deepStrictEqual(actualContent, content);            
         });
     }
 }

@@ -32,7 +32,30 @@ const FBL_PLUGIN_HTTP_REQUEST_SCHEMA = Joi.object()
             .keys({
                 form: Joi.object()
                     .keys({
-                        fields: Joi.object()
+                        multipart: Joi.object()
+                            .keys({
+                                fields: Joi.object()
+                                    .pattern(
+                                        /.+/, 
+                                        Joi.alternatives(
+                                            Joi.string(), 
+                                            Joi.number(),
+                                            Joi.array().items(Joi.string()).min(1)
+                                        )
+                                    )
+                                    .min(1),
+                                files: Joi.object()
+                                    .pattern(
+                                        /.+/, 
+                                        Joi.string().min(1)
+                                    )  
+                            })
+                            .or('fields', 'files')
+                            .options({
+                                allowUnknown: false,
+                                abortEarly: true
+                            }),
+                        urlencoded: Joi.object()
                             .pattern(
                                 /.+/, 
                                 Joi.alternatives(
@@ -40,14 +63,14 @@ const FBL_PLUGIN_HTTP_REQUEST_SCHEMA = Joi.object()
                                     Joi.number(),
                                     Joi.array().items(Joi.string()).min(1)
                                 )
-                            ),
-                        files: Joi.object()
-                            .pattern(
-                                /.+/, 
-                                Joi.string().min(1)
-                            )                        
+                        ),
+                    })
+                    .xor('multipart', 'urlencoded')
+                    .options({
+                        allowUnknown: false,
+                        abortEarly: true
                     }),
-                
+
                 json: Joi.any(),
                 
                 file: Joi.alternatives(

@@ -49,8 +49,8 @@ export class HTTPRequestActionHandler extends ActionHandler {
      */
     private async validateFileExistance(path: string, wd: string): Promise<void> {
         path = FSUtil.getAbsolutePath(path, wd);
-        const exists = await FSUtil.exists(path);
-
+        const exists = await FSUtil.exists(path);   
+             
         if (!exists) {
             throw new Error(`Unable to locate file at path: ${path}`);
         }
@@ -61,7 +61,6 @@ export class HTTPRequestActionHandler extends ActionHandler {
      */
     async validate(options: any, context: IContext, snapshot: ActionSnapshot, parameters: IDelegatedParameters): Promise<void> {
         await super.validate(options, context, snapshot, parameters);
-
         if (options.request.body) {
             if (options.request.body.file) {
                 if (typeof options.request.body.file === 'string') {
@@ -71,15 +70,9 @@ export class HTTPRequestActionHandler extends ActionHandler {
                 }
             }
 
-            if (options.request.body.form && options.request.body.form.files && Object.keys(options.request.body.form.files).length) {
-                if (options.request.headers) {
-                    const contentType = RequestUtil.getHeader(options.request.headers, 'content-type');
-                    if (contentType && contentType.toString().toLowerCase() === 'application/x-www-form-urlencoded') {
-                        throw new Error('Unable to use "x-www-form-urlencoded" with files.');
-                    }
-                }
-                for (const fieldName of Object.keys(options.request.body.form.files)) {
-                    await this.validateFileExistance(options.request.body.form.files[fieldName], snapshot.wd);                    
+            if (options.request.body.form && options.request.body.form.multipart && options.request.body.form.multipart.files && Object.keys(options.request.body.form.multipart.files).length) {                
+                for (const fieldName of Object.keys(options.request.body.form.multipart.files)) {                    
+                    await this.validateFileExistance(options.request.body.form.multipart.files[fieldName], snapshot.wd);                    
                 }
             }
         }

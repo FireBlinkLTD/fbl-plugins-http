@@ -4,7 +4,7 @@ import * as got from 'got';
 import {URLSearchParams} from 'url';
 import * as FormData from 'form-data';
 import { createReadStream, createWriteStream, unlink} from 'fs';
-import { FSUtil, ContextUtil } from 'fbl/dist/src/utils';
+import { FSUtil } from 'fbl/dist/src/utils';
 import { dirname } from 'path';
 import { promisify } from 'util';
 import { IncomingHttpHeaders } from 'http';
@@ -84,6 +84,7 @@ export class HTTPRequestService {
                 /* istanbul ignore else */
                 if (responseOptions.body.pushTo) {
                     let as = 'base64';
+                    /* istanbul ignore else */
                     if (typeof responseOptions.body.pushTo !== 'string' && responseOptions.body.pushTo.as) {
                         as = responseOptions.body.pushTo.as;
                     }
@@ -105,16 +106,19 @@ export class HTTPRequestService {
                 }
             }
         } catch (e) {
+            /* istanbul ignore else */
             if (e.statusCode) {
                 result.statusCode = e.statusCode;
             }
 
+            /* istanbul ignore else */
             if (e.headers) {
                 result.headers = e.headers;
             }
 
             throw e;
         } finally {
+            /* istanbul ignore else */
             if (result) {
                 await ResponseUtil.assign(
                     responseOptions.statusCode,
@@ -231,8 +235,9 @@ export class HTTPRequestService {
             timeout: (requestOptions.timeout || 60) * 1000
         };
 
+        /* istanbul ignore else */
         if (!RequestUtil.isHeaderExists(options.headers, 'user-agent')) {
-            options.headers['user-agent'] = 'fbl/http (https://fbl.fireblink.com)';
+            options.headers['user-agent'] = '@fbl-plugins/http (https://fbl.fireblink.com)';
         }
 
         if (requestOptions.query) {
@@ -241,28 +246,39 @@ export class HTTPRequestService {
 
         if (requestOptions.body) {
             if (requestOptions.body.form) {
-                const contentType = RequestUtil.getHeader(requestOptions.headers, 'content-type');
-                if (contentType && contentType.toString().toLowerCase() === 'application/x-www-form-urlencoded') {
-                    (options as got.GotFormOptions<any>).form = true;
-                    (options as got.GotFormOptions<any>).body = requestOptions.body.form.fields || {};
-                } else {
-                    const form = new FormData();
+                /* istanbul ignore else */
+                if (requestOptions.body.form.urlencoded) {
+                    if (!RequestUtil.isHeaderExists(requestOptions.headers, 'content-type')) {
+                        requestOptions.headers['content-type'] = 'application/x-www-form-urlencoded';
+                    }
 
-                    if (requestOptions.body.form.fields) {
-                        for (const key of Object.keys(requestOptions.body.form.fields)) {
-                            form.append(key, requestOptions.body.form.fields[key].toString());
+                    const empty = !requestOptions.body.form.urlencoded || Object.keys(requestOptions.body.form.urlencoded).length === 0;
+                    if (!empty) {
+                        (options as got.GotFormOptions<any>).form = true;                    
+                        (options as got.GotFormOptions<any>).body = requestOptions.body.form.urlencoded;
+                    }
+                } 
+
+                /* istanbul ignore else */
+                if (requestOptions.body.form.multipart) {
+                    const form = new FormData();
+                    /* istanbul ignore else */
+                    if (requestOptions.body.form.multipart.fields) {
+                        for (const key of Object.keys(requestOptions.body.form.multipart.fields)) {
+                            form.append(key, requestOptions.body.form.multipart.fields[key].toString());
                         }
                     }
     
-                    if (requestOptions.body.form.files) {
-                        for (const key of Object.keys(requestOptions.body.form.files)) {
-                            const path = FSUtil.getAbsolutePath(requestOptions.body.form.files[key], snapshot.wd);
+                    /* istanbul ignore else */
+                    if (requestOptions.body.form.multipart.files) {
+                        for (const key of Object.keys(requestOptions.body.form.multipart.files)) {
+                            const path = FSUtil.getAbsolutePath(requestOptions.body.form.multipart.files[key], snapshot.wd);
                             form.append(key, createReadStream(path));
                         }
                     }
     
-                    (options as got.GotBodyOptions<any>).body = form;
-                }                
+                    (options as got.GotBodyOptions<any>).body = form;                    
+                }          
             }
 
             if (requestOptions.body.json) {
@@ -282,7 +298,10 @@ export class HTTPRequestService {
                 
                 // find out absolute path
                 path = FSUtil.getAbsolutePath(path, snapshot.wd);
+
+                /* istanbul ignore else */
                 if (!RequestUtil.isHeaderExists(options.headers, 'content-type')) {
+                    /* istanbul ignore next */
                     options.headers['content-type'] = lookup(path) || 'application/octet-stream';
                 } 
 
@@ -314,7 +333,7 @@ export class HTTPRequestService {
             }
         }
 
-        if (['PATCH', 'POST', 'PUT'].indexOf(requestOptions.method) >= 0 && !(options as got.GotBodyOptions<any>).body) {
+        if (!(options as got.GotBodyOptions<any>).body) {
             (options as got.GotBodyOptions<any>).body = new Buffer(0);
         }
         

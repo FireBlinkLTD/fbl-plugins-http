@@ -139,8 +139,10 @@ class OptionsValidationTestSuite {
                 method: 'GET',
                 body: {
                     form: {
-                        files: {
-                            test: basename(file)
+                        multipart: {
+                            files: {
+                                test: basename(file)
+                            }
                         }
                     }                    
                 }
