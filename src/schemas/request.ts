@@ -15,7 +15,13 @@ const FBL_PLUGIN_HTTP_REQUEST_SCHEMA = Joi.object()
                 /.+/,
                 Joi.alternatives(
                     Joi.string(),
-                    Joi.array().items(Joi.string())
+                    Joi.number(),
+                    Joi.array().items(
+                        Joi.alternatives(
+                            Joi.string(),
+                            Joi.number()
+                        )                        
+                    )
                 )
             ),
 

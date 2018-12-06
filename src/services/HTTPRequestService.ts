@@ -4,14 +4,13 @@ import * as got from 'got';
 import {URLSearchParams} from 'url';
 import * as FormData from 'form-data';
 import { createReadStream, createWriteStream, unlink} from 'fs';
-import { FSUtil } from 'fbl/dist/src/utils';
+import { FSUtil, ContextUtil } from 'fbl/dist/src/utils';
 import { dirname } from 'path';
 import { promisify } from 'util';
 import { IncomingHttpHeaders } from 'http';
 import { WritableStreamBuffer } from 'stream-buffers';
 import { ActionSnapshot } from 'fbl/dist/src/models';
 import { IContext, IDelegatedParameters } from 'fbl/dist/src/interfaces';
-import { ResponseUtil } from '../utils/ResponseUtil';
 import { FlowService } from 'fbl/dist/src/services';
 import { lookup } from 'mime-types';
 import { RequestUtil } from '../utils/RequestUtil';
@@ -72,13 +71,7 @@ export class HTTPRequestService {
                         content = result.body.toString(asType);
                     }
 
-                    await ResponseUtil.assignTo(
-                        responseOptions.body.assignTo,
-                        context,
-                        snapshot,
-                        parameters,
-                        content
-                    );
+                    await ContextUtil.assignTo(context, parameters, snapshot, responseOptions.body.assignTo, content);                    
                 }
 
                 /* istanbul ignore else */
@@ -96,13 +89,7 @@ export class HTTPRequestService {
                         content = result.body.toString(as);
                     }
 
-                    await ResponseUtil.pushTo(
-                        responseOptions.body.pushTo,
-                        context,
-                        snapshot,
-                        parameters,
-                        content
-                    );
+                    await ContextUtil.pushTo(context, parameters, snapshot, responseOptions.body.pushTo, content);                    
                 }
             }
         } catch (e) {
@@ -120,21 +107,41 @@ export class HTTPRequestService {
         } finally {
             /* istanbul ignore else */
             if (result) {
-                await ResponseUtil.assign(
-                    responseOptions.statusCode,
-                    context,
-                    snapshot,
-                    parameters,
-                    result.statusCode
-                );
-
-                await ResponseUtil.assign(
-                    responseOptions.headers,
-                    context,
-                    snapshot,
-                    parameters,
-                    result.headers
-                );                
+                if (responseOptions.statusCode) {
+                    if (responseOptions.statusCode.assignTo) {
+                        await ContextUtil.assignTo(
+                            context, parameters, snapshot, 
+                            responseOptions.statusCode.assignTo, 
+                            result.statusCode
+                        );
+                    }
+        
+                    if (responseOptions.statusCode.pushTo) {
+                        await ContextUtil.pushTo(
+                            context, parameters, snapshot,
+                            responseOptions.statusCode.pushTo,
+                            result.statusCode
+                        );
+                    }
+                }
+                
+                if (responseOptions.headers) {
+                    if (responseOptions.headers.assignTo) {
+                        await ContextUtil.assignTo(
+                            context, parameters, snapshot, 
+                            responseOptions.headers.assignTo, 
+                            result.headers
+                        );
+                    }
+        
+                    if (responseOptions.headers.pushTo) {
+                        await ContextUtil.pushTo(
+                            context, parameters, snapshot,
+                            responseOptions.headers.pushTo,
+                            result.headers
+                        );
+                    }
+                }       
             }
         }
     }
@@ -241,7 +248,17 @@ export class HTTPRequestService {
         }
 
         if (requestOptions.query) {
-            options.query = new URLSearchParams(requestOptions.query);
+            const queryParams = new URLSearchParams();
+            for (const key of Object.keys(requestOptions.query)) {
+                let value: any = requestOptions.query[key];
+                if (Array.isArray(value)) {
+                    value = value.map(item => item.toString());
+                } else {
+                    value = value.toString();
+                }                
+                queryParams.append(key, value);
+            }
+            options.query = queryParams;
         }
 
         if (requestOptions.body) {
@@ -313,18 +330,18 @@ export class HTTPRequestService {
                     // resolve with global template delimiter first
                     content = await this.flowService.resolveTemplate(
                         context.ejsTemplateDelimiters.global,
-                        snapshot.wd,
                         content,
                         context,
+                        snapshot,
                         parameters
                     );
 
                     // resolve local template delimiter
                     content = await this.flowService.resolveTemplate(
                         context.ejsTemplateDelimiters.local,
-                        snapshot.wd,
                         content,
                         context,
+                        snapshot,
                         parameters
                     );
 

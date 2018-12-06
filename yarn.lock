@@ -1175,10 +1175,10 @@ fast-json-stable-stringify@^2.0.0:
   resolved "https://registry.yarnpkg.com/fast-json-stable-stringify/-/fast-json-stable-stringify-2.0.0.tgz#d5142c0caee6b1189f87d3a76111064f86c8bbf2"
   integrity sha1-1RQsDK7msRifh9OnYREGT4bIu/I=
 
-fbl@1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/fbl/-/fbl-1.2.6.tgz#731b0537470e8a093f11e0d569461d3e7deb336e"
-  integrity sha512-eNcvQmX9zyKIuyRsoKuMRlyiZJcYxuQLQsHb9kq6Lo1xr6TbNwygFF5dhKRqhKfjRaUY6Ix89nHxVqpmIBH7xg==
+fbl@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/fbl/-/fbl-1.3.0.tgz#1474941caeebb17c72e1d03a193900c2acc8df70"
+  integrity sha512-FQigivJo3jZLdJFTYjMWogGDip3Xvga/sMdA33xaZii3i0y69pAvZ2ZRNrDM2TLfqDFqJ61qHVCQBFZmiAP/5g==
   dependencies:
     cliui "4.1.0"
     colors "1.3.2"

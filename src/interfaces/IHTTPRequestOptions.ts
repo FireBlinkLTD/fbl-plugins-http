@@ -1,7 +1,7 @@
 export interface IHTTPRequestOptions {
     method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT';
     url: string;
-    query?: {[key: string]: string | string[]};
+    query?: {[key: string]: string | number | (string | number)[]};
     headers?: {[key: string]: number | string | string[]};
     body?: {
         form?: {

@@ -37,7 +37,9 @@ class JSONATestSuite {
                     url: DummyServerWrapper.ENDPOINT + '/json',
                     method: method,
                     query: {
-                        test: 'yes'
+                        string: 'yes',
+                        number: 10,
+                        array: ['no', 1]
                     },
                     headers: {
                         'X-Test': '1234'
@@ -53,6 +55,10 @@ class JSONATestSuite {
                         assignTo: {
                             ctx: '$.response.code'
                         }
+                    },
+
+                    headers: {
+                        pushTo: '$.ctx.response.headers'
                     },
     
                     body: {
@@ -72,7 +78,15 @@ class JSONATestSuite {
         
             assert.strictEqual(context.ctx.response.code, 200);
             assert.deepStrictEqual(context.ctx.response.body.method, method);
-            assert.deepStrictEqual(context.ctx.response.body.query, options.request.query);
+            assert.deepStrictEqual(context.ctx.response.body.query, {
+                string: 'yes',
+                number: '10',
+                array: 'no,1'
+            });
+            
+            const request = JSON.parse(context.ctx.response.headers[0]['x-request']);
+            assert.strictEqual(request.headers['user-agent'], '@fbl-plugins/http (https://fbl.fireblink.com)');
+            
             assert.strictEqual(context.ctx.response.body.headers['x-test'], '1234');
             assert.deepStrictEqual(context.ctx.response.body.body, {
                 test: true
