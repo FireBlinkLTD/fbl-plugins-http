@@ -979,6 +979,19 @@ diff@3.5.0, diff@^3.2.0, diff@^3.4.0:
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
   integrity sha512-A46qtFgd+g7pDZinpnwiRJtxbC1hpgf0uzP3iG89scHk0AUC7A1TGxf5OiiOUv/JMZR8GOt8hL900hV0bOy5xA==
 
+docopt@~0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/docopt/-/docopt-0.6.2.tgz#b28e9e2220da5ec49f7ea5bb24a47787405eeb11"
+  integrity sha1-so6eIiDaXsSffqW7JKR3h0Be6xE=
+
+dot-json@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/dot-json/-/dot-json-1.0.4.tgz#b5c5818eb526a7917ac02df017fe9fba37b11195"
+  integrity sha1-tcWBjrUmp5F6wC3wF/6fujexEZU=
+  dependencies:
+    docopt "~0.6.2"
+    underscore-keypath "~0.0.22"
+
 dot-prop@^4.1.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/dot-prop/-/dot-prop-4.2.0.tgz#1f19e0c2e1aa0e32797c49799f2837ac6af69c57"
@@ -1993,6 +2006,11 @@ locate-path@^3.0.0:
   dependencies:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
+
+lodash.clonedeep@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
+  integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
 
 lodash.flattendeep@^4.4.0:
   version "4.4.0"
@@ -3463,6 +3481,18 @@ uid-safe@2.1.5:
   dependencies:
     random-bytes "~1.0.0"
 
+underscore-keypath@~0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/underscore-keypath/-/underscore-keypath-0.0.22.tgz#48a528392bb6efc424be1caa56da4b5faccf264d"
+  integrity sha1-SKUoOSu278QkvhyqVtpLX6zPJk0=
+  dependencies:
+    underscore "*"
+
+underscore@*:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.1.tgz#06dce34a0e68a7babc29b365b8e74b8925203961"
+  integrity sha512-5/4etnCkd9c8gwgowi5/om/mYO5ajCaOgdzj/oW+0eQV9WxKBDZw5+ycmKmeaTXjInS/W0BzpGLo2xR2aBwZdg==
+
 unique-string@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unique-string/-/unique-string-1.0.0.tgz#9e1057cca851abb93398f8b33ae187b99caec11a"
@@ -3521,6 +3551,14 @@ url-parse-lax@^3.0.0:
   integrity sha1-FrXK/Afb42dsGxmZF3gj1lA6yww=
   dependencies:
     prepend-http "^2.0.0"
+
+user-agents@1.0.97:
+  version "1.0.97"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.97.tgz#fa186e90c7a31297dc4d39df93181c6a238ec22e"
+  integrity sha512-OGErZCTSSJRxP+3xrNM1Tcw+P5OgZgeKIS/adxLCqDcDH+OZjN9ankhiPaO49QzmFN2kpBIZsigrV2QbYAswYw==
+  dependencies:
+    dot-json "^1.0.4"
+    lodash.clonedeep "^4.5.0"
 
 utils-merge@1.0.1:
   version "1.0.1"

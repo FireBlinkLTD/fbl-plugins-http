@@ -2,6 +2,7 @@ import {IPlugin} from "fbl/dist/src/interfaces";
 import {
   HTTPRequestActionHandler
 } from './src/handlers';
+import { RandomUserAgentTemplateUtility } from "./src/templateUtilities/RandomUserAgentTemplateUtility";
 
 const packageJson = require('../package.json');
 
@@ -25,8 +26,10 @@ module.exports = <IPlugin> {
   reporters: [],
 
   actionHandlers: [
-      new HTTPRequestActionHandler()
+    new HTTPRequestActionHandler()
   ],
 
-  templateUtils: []
+  templateUtils: [
+    new  RandomUserAgentTemplateUtility()
+  ]
 };

@@ -116,3 +116,28 @@ http:
 * [JSON Rest API](examples/rest.md)
 * [URLEncoded Form Submission](examples/urlencoded.md)
 * [Multipart Form Submission](examples/multipart.md)
+
+# Template Utility Functions
+
+## Random User Agent
+
+Allows to generate random user agent that mimics real ones. Under the hood is using [user-agents](https://www.npmjs.com/package/user-agents) node module. In fact it is just a proxy function. First argument of which can be ignored or provided as a filter according to the documentaiton of the library itself.
+
+```js
+// generate random user agent
+$.http.randomUserAgent();
+
+// generate random user agent for mobile browsers only
+$.http.randomUserAgent({deviceCategory: 'mobile'});
+```
+
+**Example:**
+
+```yaml
+http:
+  request:
+    method: GET
+    url: https://fireblink.com
+    headers:
+      user-agent: <%= $.http.randomUserAgent() %>
+```
