@@ -1,7 +1,7 @@
 {
   "name": "@fbl-plugins/http",
   "version": "1.0.1",
-  "description": "",
+  "description": "fbl plugin to make http requests",
   "main": "dist/index.js",
   "engines": {
     "node": ">=8.12.0"

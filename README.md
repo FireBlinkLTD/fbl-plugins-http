@@ -1,8 +1,8 @@
 # FBL Plugins: HTTP Request
 
-[![CircleCI](https://circleci.com/gh/FireBlinkLTD/fbl-plugins-http.svg?style=svg)](https://circleci.com/gh/FireBlinkLTD/fbl-plugins-http) [![Greenkeeper badge](https://badges.greenkeeper.io/FireBlinkLTD/fbl-plugins-http.svg)](https://greenkeeper.io/)
+Make REST calls. Submit forms, upload and download files through HTTP(s) protocol. All these and a little bit more you can do with HTTP plugin for [fbl](https://fbl.fireblink.com).
 
-Plugins allows to make all kinds of http requests and can be used to download/upload files, submit forms or to integrate with REST services.
+[![CircleCI](https://circleci.com/gh/FireBlinkLTD/fbl-plugins-http.svg?style=svg)](https://circleci.com/gh/FireBlinkLTD/fbl-plugins-http) [![Greenkeeper badge](https://badges.greenkeeper.io/FireBlinkLTD/fbl-plugins-http.svg)](https://greenkeeper.io/)
 
 ## Integration
 
@@ -22,8 +22,8 @@ This is the most recommended way. Create `package.json` next to your flow file w
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "@fbl-plguins/http": "0.1.0",
-    "fbl": "1.1.0"
+    "@fbl-plguins/http": "1.0.1",
+    "fbl": "1.3.0"
   }
 }
 ```
