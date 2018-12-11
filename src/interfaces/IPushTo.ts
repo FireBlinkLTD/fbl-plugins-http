@@ -1,5 +1,5 @@
-import * as fblInterfaces from 'fbl/dist/src/interfaces';
+import * as fbl from 'fbl';
 
-export interface IPushTo extends fblInterfaces.IPushTo {
+export interface IPushTo extends fbl.IPushTo {
     as: 'base64' | 'hex' | 'utf8' | 'json';
 }

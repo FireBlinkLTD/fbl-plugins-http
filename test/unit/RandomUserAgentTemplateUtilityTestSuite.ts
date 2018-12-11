@@ -1,6 +1,6 @@
 import {suite, test} from 'mocha-typescript';
 import { RandomUserAgentTemplateUtility } from '../../src/templateUtilities/RandomUserAgentTemplateUtility';
-import { ContextUtil, ActionSnapshot } from 'fbl/dist/src';
+import { ContextUtil, ActionSnapshot } from 'fbl';
 import * as assert from 'assert';
 
 @suite()

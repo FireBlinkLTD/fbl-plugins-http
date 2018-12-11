@@ -1,5 +1,5 @@
-import * as fblInterfaces from 'fbl/dist/src/interfaces';
+import * as fbl from 'fbl';
 
-export interface IAssignTo extends fblInterfaces.IAssignTo {
+export interface IAssignTo extends fbl.IAssignTo {
     as: 'base64' | 'hex' | 'utf8' | 'json';
 }

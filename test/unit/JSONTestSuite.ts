@@ -1,11 +1,15 @@
+import {
+    ActionHandler, 
+    ActionSnapshot,
+    ContextUtil, 
+    FSUtil,
+    TempPathsRegistry
+} from 'fbl';
 import {suite, test} from 'mocha-typescript';
 import {Container} from 'typedi';
 import {DummyServerWrapper} from '../assets/dummy.http.server.wrapper';
 import {HTTPRequestActionHandler} from '../../src/handlers';
-import {ContextUtil, FSUtil} from 'fbl/dist/src/utils';
-import {ActionHandler, ActionSnapshot} from 'fbl/dist/src/models';
 import * as assert from 'assert';
-import {TempPathsRegistry} from 'fbl/dist/src/services';
 import {basename, dirname} from 'path';
 import {promisify} from 'util';
 import {writeFile} from 'fs';

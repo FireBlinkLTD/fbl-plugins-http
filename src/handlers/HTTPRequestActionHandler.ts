@@ -1,12 +1,16 @@
-import { ActionHandler, ActionSnapshot } from 'fbl/dist/src/models';
+import { 
+    ActionHandler, 
+    ActionSnapshot,
+    IActionHandlerMetadata, 
+    IDelegatedParameters, 
+    IContext,
+    FSUtil
+} from 'fbl';
+
 import * as Joi from 'joi';
 import { FBL_PLUGIN_HTTP_REQUEST_SCHEMA, FBL_PLUGIN_HTTP_RESPONSE_SCHEMA } from '../schemas';
-import { IActionHandlerMetadata, IDelegatedParameters, IContext } from 'fbl/dist/src/interfaces';
-import { FSUtil } from 'fbl/dist/src/utils';
 import Container from 'typedi';
 import { HTTPRequestService } from '../services';
-import { request } from 'http';
-import { RequestUtil } from '../utils/RequestUtil';
 
 export class HTTPRequestActionHandler extends ActionHandler {
     private static metadata = <IActionHandlerMetadata> {

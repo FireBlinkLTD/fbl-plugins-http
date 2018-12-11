@@ -1,10 +1,12 @@
+import { 
+    ActionSnapshot,
+    ContextUtil,
+    TempPathsRegistry
+ } from 'fbl';
 import {suite, test} from 'mocha-typescript';
 import { HTTPRequestActionHandler } from '../../src/handlers';
-import { ContextUtil } from 'fbl/dist/src/utils';
-import { ActionSnapshot } from 'fbl/dist/src/models';
 import { IHTTPRequestOptions } from '../../src/interfaces';
 import {Container} from 'typedi';
-import { TempPathsRegistry } from 'fbl/dist/src/services';
 import { dirname, basename } from 'path';
 
 const chai = require('chai');

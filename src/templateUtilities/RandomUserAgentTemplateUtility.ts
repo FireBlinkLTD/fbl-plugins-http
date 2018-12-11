@@ -3,7 +3,7 @@ import {
     IContext, 
     IDelegatedParameters, 
     ActionSnapshot
-} from 'fbl/dist/src';
+} from 'fbl';
 
 const UserAgent = require('user-agents');
 
