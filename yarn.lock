@@ -3569,10 +3569,10 @@ url-parse-lax@^3.0.0:
   dependencies:
     prepend-http "^2.0.0"
 
-user-agents@1.0.102:
-  version "1.0.102"
-  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.102.tgz#6409b41268b1c2660e7b5bec12c6b1cdd7dd798a"
-  integrity sha512-XctzT6mVbh3T6+Yepmt8nZFWohLcWGyLS8WvhdCQsmqNK7TLdjf8cWijcG6QNIp9xj8WBygRUNfHbjcnY1tl5Q==
+user-agents@1.0.103:
+  version "1.0.103"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.103.tgz#e0a91d3e1b50cab9342bcc5d1618e45bf8cfc300"
+  integrity sha512-5+/qi4s+E8SXUq/cOlrxYBMNBKNbq+JqXYbRWUr6iQW9y2LxQshMfM8OSf4/Qliw3GmERoiu6G3ODjTxIli3Sw==
   dependencies:
     dot-json "^1.0.4"
     lodash.clonedeep "^4.5.0"
