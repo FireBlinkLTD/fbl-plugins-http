@@ -46,7 +46,7 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "express": "4.16.4",
-    "fbl": "1.3.1",
+    "fbl": "1.3.2",
     "husky": "1.2.0",
     "mocha": "5.2.0",
     "mocha-typescript": "1.1.17",
