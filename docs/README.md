@@ -80,18 +80,18 @@ http:
     response:
         # [optional] store http response status code
         statusCode:
-            pushTo: # follows common push logic practicies https://fbl.fireblink.com/plugins/common#push-to
-            assignTo: # follows common assign logic practicies https://fbl.fireblink.com/plugins/common#assign-to 
+            pushTo: # follows common push logic practices https://fbl.fireblink.com/plugins/common#push-to
+            assignTo: # follows common assign logic practices https://fbl.fireblink.com/plugins/common#assign-to 
         
         # [optional] store http response headers
         headers:
-            pushTo: # follows common push logic practicies https://fbl.fireblink.com/plugins/common#push-to 
-            assignTo: # follows common assign logic practicies https://fbl.fireblink.com/plugins/common#assign-to 
+            pushTo: # follows common push logic practices https://fbl.fireblink.com/plugins/common#push-to 
+            assignTo: # follows common assign logic practices https://fbl.fireblink.com/plugins/common#assign-to 
 
         # [optional] store http response body
         body: 
             # [optional] Push response body into context field(s)
-            pushTo: # follows common push logic practicies https://fbl.fireblink.com/plugins/common#push-to 
+            pushTo: # follows common push logic practices https://fbl.fireblink.com/plugins/common#push-to 
                 # [optional] additional field that identifies in which format store response body
                 # Default value: base64
                 # Possible values:
@@ -102,7 +102,7 @@ http:
                 as: json
 
             # [optional] Assign response body into context field(s)
-            assignTo: # follows common assign logic practicies https://fbl.fireblink.com/plugins/common#assign-to 
+            assignTo: # follows common assign logic practices https://fbl.fireblink.com/plugins/common#assign-to 
                 # [optional] additional field that identifies in which format store response body
                 # Default and possible values are the same as ones above in `pushTo.as` field description.
                 as: json
