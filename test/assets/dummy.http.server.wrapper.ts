@@ -12,6 +12,7 @@ export class DummyServerWrapper {
      * @return {Promise<void>}
      */
     async start(): Promise<void> {
+        console.log('-> starting dummy server...');
         await this.stop();
 
         this.server = fork('index.js', [], {

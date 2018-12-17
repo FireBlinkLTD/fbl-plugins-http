@@ -34,6 +34,29 @@ class JSONATestSuite {
     }
 
     @test()
+    async minimumParameters(): Promise<void> {
+        await JSONATestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
+            const options = {
+                request: <IHTTPRequestOptions> {
+                    url: DummyServerWrapper.ENDPOINT + '/json',
+                    method: method,
+                    body: {
+                        json: {
+                            test: true
+                        }
+                    }
+                }
+            };
+
+            const context = ContextUtil.generateEmptyContext();
+            const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
+
+            await actionHandler.validate(options, context, snapshot, {});
+            await actionHandler.execute(options, context, snapshot, {});        
+        });
+    }
+
+    @test()
     async assignResponseTo(): Promise<void> {
         await JSONATestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
             const options = {

@@ -33,6 +33,33 @@ class MultipartFormTestSuite {
     }
 
     @test()
+    async minimumParameters(): Promise<void> {
+        await MultipartFormTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
+            const options = {
+                request: <IHTTPRequestOptions> {
+                    url: DummyServerWrapper.ENDPOINT + '/form/multipart',
+                    method: method,
+                    body: {
+                        form: {
+                            multipart: {
+                                fields: {
+                                    test: 'form'
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            const context = ContextUtil.generateEmptyContext();
+            const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
+
+            await actionHandler.validate(options, context, snapshot, {});
+            await actionHandler.execute(options, context, snapshot, {});        
+        });
+    }
+
+    @test()
     async assignResponseTo(): Promise<void> {
         await MultipartFormTestSuite.forEachAction(async (actionHandler: ActionHandler, method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT'): Promise<void> => {
             const options = {

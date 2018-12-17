@@ -110,41 +110,33 @@ export class HTTPRequestService {
             throw e;
         } finally {
             /* istanbul ignore else */
-            if (result) {
+            if (result && responseOptions) {
                 if (responseOptions.statusCode) {
-                    if (responseOptions.statusCode.assignTo) {
-                        await ContextUtil.assignTo(
-                            context, parameters, snapshot, 
-                            responseOptions.statusCode.assignTo, 
-                            result.statusCode
-                        );
-                    }
-        
-                    if (responseOptions.statusCode.pushTo) {
-                        await ContextUtil.pushTo(
-                            context, parameters, snapshot,
-                            responseOptions.statusCode.pushTo,
-                            result.statusCode
-                        );
-                    }
+                    await ContextUtil.assignTo(
+                        context, parameters, snapshot, 
+                        responseOptions.statusCode.assignTo, 
+                        result.statusCode
+                    );
+                        
+                    await ContextUtil.pushTo(
+                        context, parameters, snapshot,
+                        responseOptions.statusCode.pushTo,
+                        result.statusCode
+                    );                    
                 }
                 
                 if (responseOptions.headers) {
-                    if (responseOptions.headers.assignTo) {
-                        await ContextUtil.assignTo(
-                            context, parameters, snapshot, 
-                            responseOptions.headers.assignTo, 
-                            result.headers
-                        );
-                    }
-        
-                    if (responseOptions.headers.pushTo) {
-                        await ContextUtil.pushTo(
-                            context, parameters, snapshot,
-                            responseOptions.headers.pushTo,
-                            result.headers
-                        );
-                    }
+                    await ContextUtil.assignTo(
+                        context, parameters, snapshot, 
+                        responseOptions.headers.assignTo, 
+                        result.headers
+                    );
+                
+                    await ContextUtil.pushTo(
+                        context, parameters, snapshot,
+                        responseOptions.headers.pushTo,
+                        result.headers
+                    );                    
                 }       
             }
         }
@@ -269,8 +261,8 @@ export class HTTPRequestService {
             if (requestOptions.body.form) {
                 /* istanbul ignore else */
                 if (requestOptions.body.form.urlencoded) {
-                    if (!RequestUtil.isHeaderExists(requestOptions.headers, 'content-type')) {
-                        requestOptions.headers['content-type'] = 'application/x-www-form-urlencoded';
+                    if (!RequestUtil.isHeaderExists(options.headers, 'content-type')) {
+                        options.headers['content-type'] = 'application/x-www-form-urlencoded';
                     }
 
                     const empty = !requestOptions.body.form.urlencoded || Object.keys(requestOptions.body.form.urlencoded).length === 0;
