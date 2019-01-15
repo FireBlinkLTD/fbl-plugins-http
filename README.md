@@ -22,7 +22,7 @@ This is the most recommended way. Create `package.json` next to your flow file w
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "@fbl-plguins/http": "1.0.1",
+    "@fbl-plugins/http": "1.0.1",
     "fbl": "1.3.0"
   }
 }
@@ -34,17 +34,17 @@ After that you can use `yarn fbl <args>` to execute your flow or even register a
 
 ### Global installation
 
-`npm i -g @fbl-plguins/http`
+`npm i -g @fbl-plugins/http`
 
 ### Register plugin to be accessible by fbl
 
-- via cli: `fbl -p @fbl-plguins/http <args>`
+- via cli: `fbl -p @fbl-plugins/http <args>`
 - via flow:
 
 ```yaml
 requires:
   plugins:
-    '@fbl-plguins/http': '>=0.1.0'
+    '@fbl-plugins/http': '>=0.1.0'
     
 pipeline:
   # your flow goes here
