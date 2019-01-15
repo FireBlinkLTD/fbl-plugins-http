@@ -7,6 +7,7 @@
     "node": ">=8.12.0"
   },
   "scripts": {
+    "commit": "npx git-cz",
     "depcheck": "yarn-check",
     "start": "node dist/src/cli.js",
     "test": "nyc --reporter=html --reporter=text mocha",
@@ -18,48 +19,50 @@
   "license": "MIT",
   "dependencies": {
     "form-data": "2.3.3",
-    "got": "9.4.0",
-    "joi": "14.3.0",
+    "got": "9.5.1",
+    "joi": "14.3.1",
     "mime-types": "2.1.21",
     "stream-buffers": "3.0.2",
     "typedi": "0.8.0",
-    "user-agents": "1.0.108"
+    "user-agents": "1.0.137"
   },
   "peerDependencies": {
     "fbl": ">=1.3.3 <2.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "7.2.1",
+    "@commitlint/config-conventional": "7.1.2",    
     "@types/body-parser": "1.17.0",
     "@types/chai": "4.1.7",
     "@types/express": "4.16.0",
     "@types/form-data": "2.2.1",
-    "@types/got": "9.2.1",
+    "@types/got": "9.3.0",
     "@types/joi": "14.0.1",
     "@types/mime-types": "2.1.0",
     "@types/multiparty": "0.0.31",
-    "@types/node": "10.12.15",
+    "@types/node": "10.12.18",
     "@types/stream-buffers": "3.0.2",
     "body-parser": "1.18.3",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
+    "commitizen": "3.0.5",
     "express": "4.16.4",
-    "fbl": "1.3.3",
-    "husky": "1.2.1",
+    "fbl": "1.4.0",
+    "jsonlint": "1.6.3",
+    "lint-staged": "8.1.0",
+    "husky": "1.3.1",
     "mocha": "5.2.0",
     "mocha-typescript": "1.1.17",
     "mochawesome": "3.1.1",
     "multiparty": "4.2.1",
     "nyc": "13.1.0",
-    "rimraf": "2.6.2",
-    "source-map-support": "0.5.9",
-    "tslint": "5.11.0",
+    "prettier": "1.15.3",
+    "rimraf": "2.6.3",
+    "source-map-support": "0.5.10",
+    "tslint": "5.12.1",
+    "tslint-config-prettier": "1.17.0",
     "typescript": "3.2.2",
     "yarn-check": "0.0.3"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint && yarn outdated"
-    }
   },
   "nyc": {
     "check-coverage": true,

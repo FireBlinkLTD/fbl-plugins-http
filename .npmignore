@@ -1,20 +1,20 @@
 .idea/
 *.iml
 
-.circleci/
+.*
+*.log
+*.lock
+*.md
 
-.nyc_output/
 coverage/
 mochawesome-report/
 node_modules/
 
-.gitignore
-
 src/
+index.ts
+
 test/
 dist/test/
+
 tslint.json
 tsconfig.json
-
-index.ts
-yarn-error.log
