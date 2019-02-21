@@ -45,7 +45,7 @@
     "body-parser": "1.18.3",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
-    "commitizen": "3.0.5",
+    "commitizen": "3.0.6",
     "express": "4.16.4",
     "fbl": "1.4.0",
     "jsonlint": "1.6.3",
