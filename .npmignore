@@ -1,20 +1,5 @@
-.idea/
-*.iml
+*
 
-.*
-*.log
-*.lock
-*.md
-
-coverage/
-mochawesome-report/
-node_modules/
-
-src/
-index.ts
-
-test/
-dist/test/
-
-tslint.json
-tsconfig.json
+!dist/index.*
+!dist/src/**/*
+!docs/**/*

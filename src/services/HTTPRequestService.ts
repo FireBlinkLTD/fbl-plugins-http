@@ -1,17 +1,10 @@
-import { 
-    ActionSnapshot,
-    FSUtil, 
-    ContextUtil,
-    IContext, 
-    IDelegatedParameters,
-    FlowService
-} from 'fbl';
+import { ActionSnapshot, FSUtil, ContextUtil, IContext, IDelegatedParameters, FlowService } from 'fbl';
 import { Service, Inject } from 'typedi';
 import { IHTTPRequestOptions, IHTTPResponseOptions } from '../interfaces';
 import * as got from 'got';
-import {URLSearchParams} from 'url';
+import { URLSearchParams } from 'url';
 import * as FormData from 'form-data';
-import { createReadStream, createWriteStream, unlink} from 'fs';
+import { createReadStream, createWriteStream, unlink } from 'fs';
 import { dirname } from 'path';
 import { promisify } from 'util';
 import { IncomingHttpHeaders } from 'http';
@@ -21,7 +14,6 @@ import { RequestUtil } from '../utils/RequestUtil';
 
 @Service()
 export class HTTPRequestService {
-
     @Inject(() => FlowService)
     flowService: FlowService;
 
@@ -29,10 +21,16 @@ export class HTTPRequestService {
      * Make HTTP request
      * @param snapshot
      * @param parameters
-     * @param requestOptions 
-     * @param responseOptions 
+     * @param requestOptions
+     * @param responseOptions
      */
-    async makeRequest(context: IContext, snapshot: ActionSnapshot, parameters: IDelegatedParameters, requestOptions: IHTTPRequestOptions, responseOptions?: IHTTPResponseOptions) {
+    async makeRequest(
+        context: IContext,
+        snapshot: ActionSnapshot,
+        parameters: IDelegatedParameters,
+        requestOptions: IHTTPRequestOptions,
+        responseOptions?: IHTTPResponseOptions,
+    ) {
         const gotRequestOptions = await this.prepareGotRequestOptions(context, snapshot, parameters, requestOptions);
 
         let result: {
@@ -41,7 +39,7 @@ export class HTTPRequestService {
             body?: Buffer;
         } = {
             statusCode: -1,
-            headers: {}
+            headers: {},
         };
 
         try {
@@ -60,7 +58,12 @@ export class HTTPRequestService {
                 result = await this.makeRequestAndSaveResponseToBuffer(requestOptions.url, gotRequestOptions);
             }
 
-            if (result.body && responseOptions && responseOptions.body && (responseOptions.body.assignTo || responseOptions.body.pushTo)) {
+            if (
+                result.body &&
+                responseOptions &&
+                responseOptions.body &&
+                (responseOptions.body.assignTo || responseOptions.body.pushTo)
+            ) {
                 /* istanbul ignore else */
                 if (responseOptions.body.assignTo) {
                     let asType = 'base64';
@@ -68,14 +71,14 @@ export class HTTPRequestService {
                         asType = responseOptions.body.assignTo.as;
                     }
 
-                    let content;            
+                    let content;
                     if (asType === 'json') {
                         content = JSON.parse(result.body.toString('utf8'));
                     } else {
                         content = result.body.toString(asType);
                     }
 
-                    await ContextUtil.assignTo(context, parameters, snapshot, responseOptions.body.assignTo, content);                    
+                    await ContextUtil.assignTo(context, parameters, snapshot, responseOptions.body.assignTo, content);
                 }
 
                 /* istanbul ignore else */
@@ -86,14 +89,14 @@ export class HTTPRequestService {
                         as = responseOptions.body.pushTo.as;
                     }
 
-                    let content;            
+                    let content;
                     if (as === 'json') {
                         content = JSON.parse(result.body.toString('utf8'));
                     } else {
                         content = result.body.toString(as);
                     }
 
-                    await ContextUtil.pushTo(context, parameters, snapshot, responseOptions.body.pushTo, content);                    
+                    await ContextUtil.pushTo(context, parameters, snapshot, responseOptions.body.pushTo, content);
                 }
             }
         } catch (e) {
@@ -113,31 +116,39 @@ export class HTTPRequestService {
             if (result && responseOptions) {
                 if (responseOptions.statusCode) {
                     await ContextUtil.assignTo(
-                        context, parameters, snapshot, 
-                        responseOptions.statusCode.assignTo, 
-                        result.statusCode
+                        context,
+                        parameters,
+                        snapshot,
+                        responseOptions.statusCode.assignTo,
+                        result.statusCode,
                     );
-                        
+
                     await ContextUtil.pushTo(
-                        context, parameters, snapshot,
+                        context,
+                        parameters,
+                        snapshot,
                         responseOptions.statusCode.pushTo,
-                        result.statusCode
-                    );                    
+                        result.statusCode,
+                    );
                 }
-                
+
                 if (responseOptions.headers) {
                     await ContextUtil.assignTo(
-                        context, parameters, snapshot, 
-                        responseOptions.headers.assignTo, 
-                        result.headers
+                        context,
+                        parameters,
+                        snapshot,
+                        responseOptions.headers.assignTo,
+                        result.headers,
                     );
-                
+
                     await ContextUtil.pushTo(
-                        context, parameters, snapshot,
+                        context,
+                        parameters,
+                        snapshot,
                         responseOptions.headers.pushTo,
-                        result.headers
-                    );                    
-                }       
+                        result.headers,
+                    );
+                }
             }
         }
     }
@@ -145,26 +156,33 @@ export class HTTPRequestService {
     /**
      * Make HTTP request that stores response in a buffer
      * @param url
-     * @param options 
+     * @param options
      */
-    private async makeRequestAndSaveResponseToBuffer(url: string, options: got.GotOptions<any>): Promise<{statusCode: number, headers: IncomingHttpHeaders, body: Buffer}> {
+    private async makeRequestAndSaveResponseToBuffer(
+        url: string,
+        options: got.GotOptions<any>,
+    ): Promise<{ statusCode: number; headers: IncomingHttpHeaders; body: Buffer }> {
         const ws = new WritableStreamBuffer();
         const result = await this.makeStreamRequest(url, ws, options);
-        
+
         return {
             statusCode: result.statusCode,
             headers: result.headers,
-            body: ws.getContents()
+            body: ws.getContents(),
         };
     }
 
     /**
      * Make HTTP request that stores response body in file
      * @param url
-     * @param targetFile 
-     * @param options 
+     * @param targetFile
+     * @param options
      */
-    private async makeRequestAndSaveBodyToFile(url: string, targetFile: string, options: got.GotOptions<any>): Promise<{statusCode: number, headers: IncomingHttpHeaders}> {
+    private async makeRequestAndSaveBodyToFile(
+        url: string,
+        targetFile: string,
+        options: got.GotOptions<any>,
+    ): Promise<{ statusCode: number; headers: IncomingHttpHeaders }> {
         try {
             const ws = createWriteStream(targetFile);
 
@@ -182,10 +200,14 @@ export class HTTPRequestService {
     /**
      * Make HTTP request that writes response body to stream
      * @param url
-     * @param targetFile 
-     * @param options 
+     * @param targetFile
+     * @param options
      */
-    private async makeStreamRequest(url: string, ws: NodeJS.WritableStream, options: got.GotOptions<any>): Promise<{statusCode: number, headers: IncomingHttpHeaders}> {
+    private async makeStreamRequest(
+        url: string,
+        ws: NodeJS.WritableStream,
+        options: got.GotOptions<any>,
+    ): Promise<{ statusCode: number; headers: IncomingHttpHeaders }> {
         let statusCode: number;
         let headers: IncomingHttpHeaders;
 
@@ -206,14 +228,14 @@ export class HTTPRequestService {
                     headers = headers || err.headers;
                     rej(err);
                 });
-            });  
+            });
         } catch (e) {
-            e.statusCode = statusCode; 
+            e.statusCode = statusCode;
             e.headers = headers;
             throw e;
-        }          
-        
-        return {statusCode, headers};
+        }
+
+        return { statusCode, headers };
     }
 
     /**
@@ -221,21 +243,21 @@ export class HTTPRequestService {
      * @param {IContext} context
      * @param {ActionSnapshot} snapshot
      * @param {IDelegatedParameters} parameters
-     * @param {IHTTPRequestOptions} requestOptions 
-     * @param {IHTTPRequestOptions} requestOptions 
-     * @param {IHTTPRequestOptions} requestOptions 
+     * @param {IHTTPRequestOptions} requestOptions
+     * @param {IHTTPRequestOptions} requestOptions
+     * @param {IHTTPRequestOptions} requestOptions
      * @return {got.GotOptions}
      */
     private async prepareGotRequestOptions(
-        context: IContext, 
+        context: IContext,
         snapshot: ActionSnapshot,
         parameters: IDelegatedParameters,
-        requestOptions: IHTTPRequestOptions
+        requestOptions: IHTTPRequestOptions,
     ): Promise<got.GotOptions<any>> {
         const options: got.GotOptions<any> = {
             method: requestOptions.method,
             headers: requestOptions.headers || {},
-            timeout: (requestOptions.timeout || 60) * 1000
+            timeout: (requestOptions.timeout || 60) * 1000,
         };
 
         /* istanbul ignore else */
@@ -251,7 +273,7 @@ export class HTTPRequestService {
                     value = value.map(item => item.toString());
                 } else {
                     value = value.toString();
-                }                
+                }
                 queryParams.append(key, value);
             }
             options.query = queryParams;
@@ -265,12 +287,14 @@ export class HTTPRequestService {
                         options.headers['content-type'] = 'application/x-www-form-urlencoded';
                     }
 
-                    const empty = !requestOptions.body.form.urlencoded || Object.keys(requestOptions.body.form.urlencoded).length === 0;
+                    const empty =
+                        !requestOptions.body.form.urlencoded ||
+                        Object.keys(requestOptions.body.form.urlencoded).length === 0;
                     if (!empty) {
-                        (options as got.GotFormOptions<any>).form = true;                    
+                        (options as got.GotFormOptions<any>).form = true;
                         (options as got.GotFormOptions<any>).body = requestOptions.body.form.urlencoded;
                     }
-                } 
+                }
 
                 /* istanbul ignore else */
                 if (requestOptions.body.form.multipart) {
@@ -281,21 +305,24 @@ export class HTTPRequestService {
                             form.append(key, requestOptions.body.form.multipart.fields[key].toString());
                         }
                     }
-    
+
                     /* istanbul ignore else */
                     if (requestOptions.body.form.multipart.files) {
                         for (const key of Object.keys(requestOptions.body.form.multipart.files)) {
-                            const path = FSUtil.getAbsolutePath(requestOptions.body.form.multipart.files[key], snapshot.wd);
+                            const path = FSUtil.getAbsolutePath(
+                                requestOptions.body.form.multipart.files[key],
+                                snapshot.wd,
+                            );
                             form.append(key, createReadStream(path));
                         }
                     }
-    
-                    (options as got.GotBodyOptions<any>).body = form;                    
-                }          
+
+                    (options as got.GotBodyOptions<any>).body = form;
+                }
             }
 
             if (requestOptions.body.json) {
-                (options as got.GotBodyOptions<any>).body = JSON.stringify(requestOptions.body.json);                
+                (options as got.GotBodyOptions<any>).body = JSON.stringify(requestOptions.body.json);
                 options.headers['content-type'] = 'application/json';
             }
 
@@ -308,7 +335,7 @@ export class HTTPRequestService {
                     path = requestOptions.body.file.path;
                     template = requestOptions.body.file.template;
                 }
-                
+
                 // find out absolute path
                 path = FSUtil.getAbsolutePath(path, snapshot.wd);
 
@@ -316,10 +343,10 @@ export class HTTPRequestService {
                 if (!RequestUtil.isHeaderExists(options.headers, 'content-type')) {
                     /* istanbul ignore next */
                     options.headers['content-type'] = lookup(path) || 'application/octet-stream';
-                } 
+                }
 
                 if (!template) {
-                    (options as got.GotBodyOptions<any>).body = createReadStream(path);                                       
+                    (options as got.GotBodyOptions<any>).body = createReadStream(path);
                 } else {
                     let content = await FSUtil.readTextFile(path);
 
@@ -329,7 +356,7 @@ export class HTTPRequestService {
                         content,
                         context,
                         snapshot,
-                        parameters
+                        parameters,
                     );
 
                     // resolve local template delimiter
@@ -338,7 +365,7 @@ export class HTTPRequestService {
                         content,
                         context,
                         snapshot,
-                        parameters
+                        parameters,
                     );
 
                     (options as got.GotBodyOptions<any>).body = content;
@@ -349,7 +376,7 @@ export class HTTPRequestService {
         if (!(options as got.GotBodyOptions<any>).body) {
             (options as got.GotBodyOptions<any>).body = new Buffer(0);
         }
-        
+
         return options;
     }
 }

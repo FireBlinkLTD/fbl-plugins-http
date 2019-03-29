@@ -57,8 +57,9 @@ class FileDownloadTestSuite {
         const context = ContextUtil.generateEmptyContext();
         const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(targetFile), 0, {});
 
-        await actionHandler.validate(options, context, snapshot, {});
-        await actionHandler.execute(options, context, snapshot, {});
+        const processor = actionHandler.getProcessor(options, context, snapshot, {});
+        await processor.validate();
+        await processor.execute();
 
         assert.strictEqual(context.ctx.response.code, 200);
 
@@ -101,8 +102,9 @@ class FileDownloadTestSuite {
         const context = ContextUtil.generateEmptyContext();
         const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
 
-        await actionHandler.validate(options, context, snapshot, {});
-        await actionHandler.execute(options, context, snapshot, {});
+        const processor = actionHandler.getProcessor(options, context, snapshot, {});
+        await processor.validate();
+        await processor.execute();
 
         const expected = await FSUtil.readTextFile(resolve(__dirname, '../../../test/assets/server/static/file.txt'));
         assert.strictEqual(context.ctx.response.body, expected);
@@ -146,8 +148,9 @@ class FileDownloadTestSuite {
         const context = ContextUtil.generateEmptyContext();
         const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(targetFile), 0, {});
 
-        await actionHandler.validate(options, context, snapshot, {});
-        await chai.expect(actionHandler.execute(options, context, snapshot, {})).to.be.rejected;
+        const processor = actionHandler.getProcessor(options, context, snapshot, {});
+        await processor.validate();
+        await chai.expect(processor.execute()).to.be.rejected;
 
         assert.strictEqual(context.ctx.response.code, 404);
 

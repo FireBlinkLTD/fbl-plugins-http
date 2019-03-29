@@ -1,4 +1,4 @@
-import {suite, test} from 'mocha-typescript';
+import { suite, test } from 'mocha-typescript';
 import { RandomUserAgentTemplateUtility } from '../../src/templateUtilities/RandomUserAgentTemplateUtility';
 import { ContextUtil, ActionSnapshot } from 'fbl';
 import * as assert from 'assert';
@@ -10,7 +10,7 @@ class RandomUserAgentTemplateUtilityTestSuite {
         const fn = new RandomUserAgentTemplateUtility().getUtilities(
             ContextUtil.generateEmptyContext(),
             new ActionSnapshot('', {}, '.', 0, {}),
-            {}
+            {},
         ).http.randomUserAgent;
 
         const withoutFilters = fn();

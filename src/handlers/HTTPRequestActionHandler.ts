@@ -1,37 +1,101 @@
-import { 
-    ActionHandler, 
+import {
+    ActionHandler,
+    ActionProcessor,
     ActionSnapshot,
-    IActionHandlerMetadata, 
-    IDelegatedParameters, 
+    IActionHandlerMetadata,
+    IDelegatedParameters,
     IContext,
-    FSUtil
+    FSUtil,
 } from 'fbl';
 
 import * as Joi from 'joi';
-import { FBL_PLUGIN_HTTP_REQUEST_SCHEMA, FBL_PLUGIN_HTTP_RESPONSE_SCHEMA } from '../schemas';
 import Container from 'typedi';
+
+import { FBL_PLUGIN_HTTP_REQUEST_SCHEMA, FBL_PLUGIN_HTTP_RESPONSE_SCHEMA } from '../schemas';
 import { HTTPRequestService } from '../services';
 
-export class HTTPRequestActionHandler extends ActionHandler {
-    private static metadata = <IActionHandlerMetadata> {
-        id: 'com.fireblink.fbl.plugins.http.request',
-        aliases: [
-            'fbl.plugins.http.request',
-            'http.request',
-            'http'
-        ]
-    };
-
+export class HTTPRequestActionProcessor extends ActionProcessor {
     private static schema = Joi.object()
         .keys({
             request: FBL_PLUGIN_HTTP_REQUEST_SCHEMA.required(),
-            response: FBL_PLUGIN_HTTP_RESPONSE_SCHEMA
+            response: FBL_PLUGIN_HTTP_RESPONSE_SCHEMA,
         })
         .required()
         .options({
             abortEarly: true,
-            allowUnknown: false
+            allowUnknown: false,
         });
+
+    /**
+     * @inheritdoc
+     */
+    getValidationSchema(): Joi.SchemaLike {
+        return HTTPRequestActionProcessor.schema;
+    }
+
+    /**
+     * Make sure file exists at given path
+     * @param path
+     */
+    private async validateFileExistance(path: string): Promise<void> {
+        path = FSUtil.getAbsolutePath(path, this.snapshot.wd);
+        const exists = await FSUtil.exists(path);
+
+        if (!exists) {
+            throw new Error(`Unable to locate file at path: ${path}`);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    async validate(): Promise<void> {
+        await super.validate();
+
+        if (this.options.request.body) {
+            if (this.options.request.body.file) {
+                if (typeof this.options.request.body.file === 'string') {
+                    await this.validateFileExistance(this.options.request.body.file);
+                } else {
+                    await this.validateFileExistance(this.options.request.body.file.path);
+                }
+            }
+
+            if (
+                this.options.request.body.form &&
+                this.options.request.body.form.multipart &&
+                this.options.request.body.form.multipart.files &&
+                Object.keys(this.options.request.body.form.multipart.files).length
+            ) {
+                for (const fieldName of Object.keys(this.options.request.body.form.multipart.files)) {
+                    await this.validateFileExistance(this.options.request.body.form.multipart.files[fieldName]);
+                }
+            }
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    async execute(): Promise<void> {
+        const httpRequestService = Container.get(HTTPRequestService);
+
+        // make request
+        await httpRequestService.makeRequest(
+            this.context,
+            this.snapshot,
+            this.parameters,
+            this.options.request,
+            this.options.response,
+        );
+    }
+}
+
+export class HTTPRequestActionHandler extends ActionHandler {
+    private static metadata = <IActionHandlerMetadata>{
+        id: 'com.fireblink.fbl.plugins.http.request',
+        aliases: ['fbl.plugins.http.request', 'http.request', 'http'],
+    };
 
     /**
      * @inheritdoc
@@ -43,59 +107,12 @@ export class HTTPRequestActionHandler extends ActionHandler {
     /**
      * @inheritdoc
      */
-    getValidationSchema(): Joi.SchemaLike {
-        return HTTPRequestActionHandler.schema;
-    }
-
-    /**
-     * Make sure file exists at given path
-     * @param path
-     * @param wd 
-     */
-    private async validateFileExistance(path: string, wd: string): Promise<void> {
-        path = FSUtil.getAbsolutePath(path, wd);
-        const exists = await FSUtil.exists(path);   
-
-        if (!exists) {
-            throw new Error(`Unable to locate file at path: ${path}`);
-        }
-    }
-
-    /**
-     * @inheritdoc    
-     */
-    async validate(options: any, context: IContext, snapshot: ActionSnapshot, parameters: IDelegatedParameters): Promise<void> {
-        await super.validate(options, context, snapshot, parameters);
-        if (options.request.body) {
-            if (options.request.body.file) {
-                if (typeof options.request.body.file === 'string') {
-                    await this.validateFileExistance(options.request.body.file, snapshot.wd);
-                } else {
-                    await this.validateFileExistance(options.request.body.file.path, snapshot.wd);
-                }
-            }
-
-            if (options.request.body.form && options.request.body.form.multipart && options.request.body.form.multipart.files && Object.keys(options.request.body.form.multipart.files).length) {                
-                for (const fieldName of Object.keys(options.request.body.form.multipart.files)) {                    
-                    await this.validateFileExistance(options.request.body.form.multipart.files[fieldName], snapshot.wd);                    
-                }
-            }
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    async execute(options: any, context: IContext, snapshot: ActionSnapshot, parameters: IDelegatedParameters): Promise<void> {
-        const httpRequestService = Container.get(HTTPRequestService);    
-        
-        // make request
-        await httpRequestService.makeRequest(
-            context,
-            snapshot,
-            parameters,
-            options.request, 
-            options.response
-        );
+    getProcessor(
+        options: any,
+        context: IContext,
+        snapshot: ActionSnapshot,
+        parameters: IDelegatedParameters,
+    ): ActionProcessor {
+        return new HTTPRequestActionProcessor(options, context, snapshot, parameters);
     }
 }

@@ -53,8 +53,9 @@ class JSONTestSuite {
                 const context = ContextUtil.generateEmptyContext();
                 const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
 
-                await actionHandler.validate(options, context, snapshot, {});
-                await actionHandler.execute(options, context, snapshot, {});
+                const processor = actionHandler.getProcessor(options, context, snapshot, {});
+                await processor.validate();
+                await processor.execute();
             },
         );
     }
@@ -107,8 +108,9 @@ class JSONTestSuite {
                 const context = ContextUtil.generateEmptyContext();
                 const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
 
-                await actionHandler.validate(options, context, snapshot, {});
-                await actionHandler.execute(options, context, snapshot, {});
+                const processor = actionHandler.getProcessor(options, context, snapshot, {});
+                await processor.validate();
+                await processor.execute();
 
                 assert.strictEqual(context.ctx.response.code, 200);
                 assert.deepStrictEqual(context.ctx.response.body.method, method);
@@ -171,8 +173,9 @@ class JSONTestSuite {
                 const context = ContextUtil.generateEmptyContext();
                 const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
 
-                await actionHandler.validate(options, context, snapshot, {});
-                await actionHandler.execute(options, context, snapshot, {});
+                const processor = actionHandler.getProcessor(options, context, snapshot, {});
+                await processor.validate();
+                await processor.execute();
 
                 assert.deepStrictEqual(context.ctx.response.code, [200]);
                 assert.deepStrictEqual(context.ctx.response.body[0].method, method);
@@ -211,8 +214,9 @@ class JSONTestSuite {
                 const context = ContextUtil.generateEmptyContext();
                 const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(file), 0, {});
 
-                await actionHandler.validate(options, context, snapshot, {});
-                await actionHandler.execute(options, context, snapshot, {});
+                const processor = actionHandler.getProcessor(options, context, snapshot, {});
+                await processor.validate();
+                await processor.execute();
 
                 const body = await FSUtil.readYamlFromFile(file);
                 assert.strictEqual(body.method, method);
@@ -258,8 +262,9 @@ class JSONTestSuite {
                 const context = ContextUtil.generateEmptyContext();
                 const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(file), 0, {});
 
-                await actionHandler.validate(options, context, snapshot, {});
-                await actionHandler.execute(options, context, snapshot, {});
+                const processor = actionHandler.getProcessor(options, context, snapshot, {});
+                await processor.validate();
+                await processor.execute();
 
                 assert.strictEqual(context.ctx.response.code, 200);
                 assert.deepStrictEqual(context.ctx.response.body.method, method);
@@ -311,8 +316,9 @@ class JSONTestSuite {
                 context.ctx.test = 'yes';
                 const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(file), 0, {});
 
-                await actionHandler.validate(options, context, snapshot, {});
-                await actionHandler.execute(options, context, snapshot, {});
+                const processor = actionHandler.getProcessor(options, context, snapshot, {});
+                await processor.validate();
+                await processor.execute();
 
                 assert.strictEqual(context.ctx.response.code, 200);
                 assert.deepStrictEqual(context.ctx.response.body.method, method);

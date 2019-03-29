@@ -1,5 +1,5 @@
-import {ChildProcess, fork} from 'child_process';
-import {join} from 'path';
+import { ChildProcess, fork } from 'child_process';
+import { join } from 'path';
 
 export class DummyServerWrapper {
     public static ENDPOINT = 'http://localhost:3000';
@@ -16,15 +16,15 @@ export class DummyServerWrapper {
         await this.stop();
 
         this.server = fork('index.js', [], {
-            cwd: join(__dirname, 'server') ,
-            silent: true
+            cwd: join(__dirname, 'server'),
+            silent: true,
         });
 
-        this.server.stdout.on('data', (data) => {
+        this.server.stdout.on('data', data => {
             console.error(`-> Server.stdout: ${data.toString().trim()}`);
         });
 
-        this.server.stderr.on('data', (data) => {
+        this.server.stderr.on('data', data => {
             console.error(`-> Server.stderr: ${data.toString().trim()}`);
         });
 

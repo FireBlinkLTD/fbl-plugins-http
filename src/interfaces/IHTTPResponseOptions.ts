@@ -11,7 +11,7 @@ export interface IHTTPResponseOptions {
         assignTo?: IAssignTo | string;
         pushTo?: IPushTo | string;
     };
-    
+
     body?: {
         assignTo?: IAssignTo | string;
         pushTo?: IPushTo | string;

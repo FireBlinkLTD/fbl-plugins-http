@@ -1,12 +1,8 @@
-import { 
-    ActionSnapshot,
-    ContextUtil,
-    TempPathsRegistry
- } from 'fbl';
-import {suite, test} from 'mocha-typescript';
+import { ActionSnapshot, ContextUtil, TempPathsRegistry } from 'fbl';
+import { suite, test } from 'mocha-typescript';
 import { HTTPRequestActionHandler } from '../../src/handlers';
 import { IHTTPRequestOptions } from '../../src/interfaces';
-import {Container} from 'typedi';
+import { Container } from 'typedi';
 import { dirname, basename } from 'path';
 
 const chai = require('chai');
@@ -25,44 +21,68 @@ class OptionsValidationTestSuite {
         const context = ContextUtil.generateEmptyContext();
         const snapshot = new ActionSnapshot('.', {}, '', 0, {});
 
+        await chai.expect(actionHandler.getProcessor([], context, snapshot, {}).validate()).to.be.rejected;
+
+        await chai.expect(actionHandler.getProcessor({}, context, snapshot, {}).validate()).to.be.rejected;
+
         await chai.expect(
-            actionHandler.validate([], context, snapshot, {})
+            actionHandler
+                .getProcessor(
+                    {
+                        request: {},
+                    },
+                    context,
+                    snapshot,
+                    {},
+                )
+                .validate(),
         ).to.be.rejected;
 
         await chai.expect(
-            actionHandler.validate({}, context, snapshot, {})
+            actionHandler
+                .getProcessor(
+                    {
+                        request: {
+                            url: 'test',
+                        },
+                    },
+                    context,
+                    snapshot,
+                    {},
+                )
+                .validate(),
         ).to.be.rejected;
 
         await chai.expect(
-            actionHandler.validate({
-                request: {}
-            }, context, snapshot, {})
+            actionHandler
+                .getProcessor(
+                    {
+                        request: {
+                            url: 'http://fireblink.com',
+                            method: 'UNKNOWN',
+                        },
+                    },
+                    context,
+                    snapshot,
+                    {},
+                )
+                .validate(),
         ).to.be.rejected;
 
         await chai.expect(
-            actionHandler.validate({
-                request: {
-                    url: 'test'
-                }
-            }, context, snapshot, {})
-        ).to.be.rejected;
-
-        await chai.expect(
-            actionHandler.validate({
-                request: {
-                    url: 'http://fireblink.com',
-                    method: 'UNKNOWN'
-                }
-            }, context, snapshot, {})
-        ).to.be.rejected;
-
-        await chai.expect(
-            actionHandler.validate({
-                request: {
-                    url: 'fireblink.com',
-                    method: 'GET'
-                }
-            }, context, snapshot, {})
+            actionHandler
+                .getProcessor(
+                    {
+                        request: {
+                            url: 'fireblink.com',
+                            method: 'GET',
+                        },
+                    },
+                    context,
+                    snapshot,
+                    {},
+                )
+                .validate(),
         ).to.be.rejected;
     }
 
@@ -71,13 +91,20 @@ class OptionsValidationTestSuite {
         const actionHandler = new HTTPRequestActionHandler();
         const context = ContextUtil.generateEmptyContext();
         const snapshot = new ActionSnapshot('.', {}, '', 0, {});
-    
-        await actionHandler.validate({
-            request: {
-                url: 'http://fireblink.com',
-                method: 'GET'
-            }
-        }, context, snapshot, {});
+
+        await actionHandler
+            .getProcessor(
+                {
+                    request: {
+                        url: 'http://fireblink.com',
+                        method: 'GET',
+                    },
+                },
+                context,
+                snapshot,
+                {},
+            )
+            .validate();
     }
 
     @test()
@@ -87,36 +114,50 @@ class OptionsValidationTestSuite {
         const snapshot = new ActionSnapshot('.', {}, '', 0, {});
 
         await chai.expect(
-            actionHandler.validate({
-                request: <IHTTPRequestOptions> {
-                    url: 'http://fireblink.com',
-                    method: 'GET',
-                    body: {
-                        file: 'missing_file.txt'
-                    }
-                }
-            }, context, snapshot, {})
+            actionHandler
+                .getProcessor(
+                    {
+                        request: <IHTTPRequestOptions>{
+                            url: 'http://fireblink.com',
+                            method: 'GET',
+                            body: {
+                                file: 'missing_file.txt',
+                            },
+                        },
+                    },
+                    context,
+                    snapshot,
+                    {},
+                )
+                .validate(),
         ).to.be.rejected;
 
         await chai.expect(
-            actionHandler.validate({
-                request: <IHTTPRequestOptions> {
-                    url: 'http://fireblink.com',
-                    method: 'GET',
-                    body: {
-                        form: {
-                            files: {
-                                test: 'missing_file.txt'
-                            }
-                        }                    
-                    }
-                }
-            }, context, snapshot, {})
+            actionHandler
+                .getProcessor(
+                    {
+                        request: <IHTTPRequestOptions>{
+                            url: 'http://fireblink.com',
+                            method: 'GET',
+                            body: {
+                                form: {
+                                    files: {
+                                        test: 'missing_file.txt',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    context,
+                    snapshot,
+                    {},
+                )
+                .validate(),
         ).to.be.rejected;
     }
 
     @test()
-    async passFileValidation() {        
+    async passFileValidation() {
         const tempPathsRegistry = Container.get(TempPathsRegistry);
         const file = await tempPathsRegistry.createTempFile();
 
@@ -124,31 +165,44 @@ class OptionsValidationTestSuite {
         const context = ContextUtil.generateEmptyContext();
         const snapshot = new ActionSnapshot('.', {}, dirname(file), 0, {});
 
-        
-        await actionHandler.validate({
-            request: <IHTTPRequestOptions> {
-                url: 'http://fireblink.com',
-                method: 'GET',
-                body: {
-                    file: basename(file)
-                }
-            }
-        }, context, snapshot, {});        
+        await actionHandler
+            .getProcessor(
+                {
+                    request: <IHTTPRequestOptions>{
+                        url: 'http://fireblink.com',
+                        method: 'GET',
+                        body: {
+                            file: basename(file),
+                        },
+                    },
+                },
+                context,
+                snapshot,
+                {},
+            )
+            .validate();
 
-        await actionHandler.validate({
-            request: <IHTTPRequestOptions> {
-                url: 'http://fireblink.com',
-                method: 'GET',
-                body: {
-                    form: {
-                        multipart: {
-                            files: {
-                                test: basename(file)
-                            }
-                        }
-                    }                    
-                }
-            }
-        }, context, snapshot, {});    
+        await actionHandler
+            .getProcessor(
+                {
+                    request: <IHTTPRequestOptions>{
+                        url: 'http://fireblink.com',
+                        method: 'GET',
+                        body: {
+                            form: {
+                                multipart: {
+                                    files: {
+                                        test: basename(file),
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                context,
+                snapshot,
+                {},
+            )
+            .validate();
     }
 }
