@@ -23,7 +23,7 @@
     "form-data": "2.3.3",
     "got": "9.6.0",
     "joi": "14.3.1",
-    "mime-types": "2.1.22",
+    "mime-types": "2.1.23",
     "stream-buffers": "3.0.2",
     "typedi": "0.8.0",
     "user-agents": "1.0.210"
