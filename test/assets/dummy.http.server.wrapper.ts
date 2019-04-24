@@ -16,7 +16,7 @@ export class DummyServerWrapper {
         await this.stop();
 
         this.server = fork('index.js', [], {
-            cwd: join(__dirname, 'server'),
+            cwd: 'dist/test/assets/server',
             silent: true,
         });
 

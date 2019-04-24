@@ -10,7 +10,7 @@ import { promisify } from 'util';
 import { IncomingHttpHeaders } from 'http';
 import { WritableStreamBuffer } from 'stream-buffers';
 import { lookup } from 'mime-types';
-import { RequestUtil } from '../utils/RequestUtil';
+import { isHeaderExists } from '../utils/RequestUtil';
 
 @Service()
 export class HTTPRequestService {
@@ -261,7 +261,7 @@ export class HTTPRequestService {
         };
 
         /* istanbul ignore else */
-        if (!RequestUtil.isHeaderExists(options.headers, 'user-agent')) {
+        if (!isHeaderExists(options.headers, 'user-agent')) {
             options.headers['user-agent'] = '@fbl-plugins/http (https://fbl.fireblink.com)';
         }
 
@@ -283,7 +283,7 @@ export class HTTPRequestService {
             if (requestOptions.body.form) {
                 /* istanbul ignore else */
                 if (requestOptions.body.form.urlencoded) {
-                    if (!RequestUtil.isHeaderExists(options.headers, 'content-type')) {
+                    if (!isHeaderExists(options.headers, 'content-type')) {
                         options.headers['content-type'] = 'application/x-www-form-urlencoded';
                     }
 
@@ -340,7 +340,7 @@ export class HTTPRequestService {
                 path = FSUtil.getAbsolutePath(path, snapshot.wd);
 
                 /* istanbul ignore else */
-                if (!RequestUtil.isHeaderExists(options.headers, 'content-type')) {
+                if (!isHeaderExists(options.headers, 'content-type')) {
                     /* istanbul ignore next */
                     options.headers['content-type'] = lookup(path) || 'application/octet-stream';
                 }

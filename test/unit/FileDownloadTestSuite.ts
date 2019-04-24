@@ -2,7 +2,7 @@ import { ActionSnapshot, ContextUtil, FSUtil, TempPathsRegistry } from 'fbl';
 import { suite, test } from 'mocha-typescript';
 import { DummyServerWrapper } from '../assets/dummy.http.server.wrapper';
 import { Container } from 'typedi';
-import { basename, dirname, resolve } from 'path';
+import { basename, dirname } from 'path';
 import * as assert from 'assert';
 import { HTTPRequestActionHandler } from '../../src/handlers';
 import { IHTTPRequestOptions, IHTTPResponseOptions } from '../../src/interfaces';
@@ -69,7 +69,7 @@ class FileDownloadTestSuite {
         assert.strictEqual(request.headers['x-test'], '1234');
 
         const actual = await FSUtil.readTextFile(targetFile);
-        const expected = await FSUtil.readTextFile(resolve(__dirname, '../../../test/assets/server/static/file.txt'));
+        const expected = await FSUtil.readTextFile('test/assets/server/static/file.txt');
         assert.strictEqual(actual, expected);
         assert.strictEqual(context.ctx.assigned, new Buffer(expected).toString('base64'));
         assert.deepStrictEqual(context.ctx.pushed, [new Buffer(expected).toString('hex')]);
@@ -106,7 +106,7 @@ class FileDownloadTestSuite {
         await processor.validate();
         await processor.execute();
 
-        const expected = await FSUtil.readTextFile(resolve(__dirname, '../../../test/assets/server/static/file.txt'));
+        const expected = await FSUtil.readTextFile('test/assets/server/static/file.txt');
         assert.strictEqual(context.ctx.response.body, expected);
         assert.strictEqual(context.ctx.response['body[]'][0], expected);
     }
