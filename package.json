@@ -45,7 +45,7 @@
     "@types/multiparty": "0.0.32",
     "@types/node": "11.13.7",
     "@types/stream-buffers": "3.0.2",
-    "body-parser": "1.18.3",
+    "body-parser": "1.19.0",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "commitizen": "3.1.1",
