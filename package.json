@@ -42,7 +42,7 @@
     "@types/joi": "14.3.3",
     "@types/mime-types": "2.1.0",
     "@types/multiparty": "0.0.32",
-    "@types/node": "11.13.7",
+    "@types/node": "11.13.8",
     "@types/stream-buffers": "3.0.2",
     "body-parser": "1.18.3",
     "chai": "4.2.0",
