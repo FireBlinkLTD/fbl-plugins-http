@@ -36,7 +36,7 @@ export class HTTPRequestService {
         let result: {
             statusCode: number;
             headers: IncomingHttpHeaders;
-            body?: Buffer;
+            body?: Buffer | false;
         } = {
             statusCode: -1,
             headers: {},
@@ -161,7 +161,7 @@ export class HTTPRequestService {
     private async makeRequestAndSaveResponseToBuffer(
         url: string,
         options: got.GotOptions<any>,
-    ): Promise<{ statusCode: number; headers: IncomingHttpHeaders; body: Buffer }> {
+    ): Promise<{ statusCode: number; headers: IncomingHttpHeaders; body: Buffer | false }> {
         const ws = new WritableStreamBuffer();
         const result = await this.makeStreamRequest(url, ws, options);
 

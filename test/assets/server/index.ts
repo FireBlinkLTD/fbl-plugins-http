@@ -44,13 +44,11 @@ app.use(
     EchoRouter,
 );
 
-app.listen(port, (err: Error) => {
-    if (err) {
-        processSend('failed');
-        console.error(err);
-        process.exit(1);
-    }
-
+app.listen(port, () => {
     console.log('Server is running on port: ' + port);
     processSend('started');
+}).on('error', (err: Error) => {
+    processSend('failed');
+    console.error(err);
+    process.exit(1);
 });
