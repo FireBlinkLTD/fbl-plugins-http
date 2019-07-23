@@ -25,8 +25,8 @@ This is the most recommended way. Create `package.json` next to your flow file w
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "@fbl-plugins/http": "1.1.0",
-    "fbl": "1.7.0"
+    "@fbl-plugins/http": "1.1.1",
+    "fbl": "1.8.0"
   }
 }
 ```
@@ -46,9 +46,9 @@ After that you can use `yarn fbl <args>` to execute your flow or even register a
 
 ```yaml
 requires:
-  fbl: '>=1.7.0'
+  fbl: '>=1.8.0'
   plugins:
-    '@fbl-plugins/http': '>=1.1.0'
+    '@fbl-plugins/http': '>=1.1.1'
 
 pipeline:
   # your flow goes here
