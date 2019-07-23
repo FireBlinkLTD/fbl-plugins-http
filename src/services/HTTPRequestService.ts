@@ -48,9 +48,9 @@ export class HTTPRequestService {
                 targetFile = FSUtil.getAbsolutePath(targetFile, snapshot.wd);
                 await FSUtil.mkdirp(dirname(targetFile));
 
-                snapshot.log(`Make ${requestOptions.method} request to ${requestOptions.url}`, true);
+                snapshot.log(`Make ${requestOptions.method} request to ${requestOptions.url}`);
                 result = await this.makeRequestAndSaveBodyToFile(requestOptions.url, targetFile, gotRequestOptions);
-                snapshot.log(`Complete ${requestOptions.method} request to ${requestOptions.url}`, true);
+                snapshot.log(`Complete ${requestOptions.method} request to ${requestOptions.url}`);
                 if (responseOptions.body.assignTo || responseOptions.body.pushTo) {
                     result.body = await FSUtil.readFile(targetFile);
                 }
@@ -357,6 +357,7 @@ export class HTTPRequestService {
                         context,
                         snapshot,
                         parameters,
+                        dirname(path),
                     );
 
                     // resolve local template delimiter
@@ -366,6 +367,7 @@ export class HTTPRequestService {
                         context,
                         snapshot,
                         parameters,
+                        dirname(path),
                     );
 
                     (options as got.GotBodyOptions<any>).body = content;
