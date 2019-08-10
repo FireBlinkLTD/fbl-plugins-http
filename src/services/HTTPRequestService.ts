@@ -357,7 +357,6 @@ export class HTTPRequestService {
                         context,
                         snapshot,
                         parameters,
-                        dirname(path),
                     );
 
                     // resolve local template delimiter
@@ -367,7 +366,6 @@ export class HTTPRequestService {
                         context,
                         snapshot,
                         parameters,
-                        dirname(path),
                     );
 
                     (options as got.GotBodyOptions<any>).body = content;
