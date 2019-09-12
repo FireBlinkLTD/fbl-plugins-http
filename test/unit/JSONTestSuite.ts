@@ -51,7 +51,7 @@ class JSONTestSuite {
                 };
 
                 const context = ContextUtil.generateEmptyContext();
-                const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
+                const snapshot = new ActionSnapshot('index.yml', actionHandler.getMetadata().id, {}, '.', 0, {});
 
                 const processor = actionHandler.getProcessor(options, context, snapshot, {});
                 await processor.validate();
@@ -106,7 +106,7 @@ class JSONTestSuite {
                 };
 
                 const context = ContextUtil.generateEmptyContext();
-                const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
+                const snapshot = new ActionSnapshot('index.yml', actionHandler.getMetadata().id, {}, '.', 0, {});
 
                 const processor = actionHandler.getProcessor(options, context, snapshot, {});
                 await processor.validate();
@@ -171,7 +171,7 @@ class JSONTestSuite {
                 };
 
                 const context = ContextUtil.generateEmptyContext();
-                const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
+                const snapshot = new ActionSnapshot('index.yml', actionHandler.getMetadata().id, {}, '.', 0, {});
 
                 const processor = actionHandler.getProcessor(options, context, snapshot, {});
                 await processor.validate();
@@ -212,7 +212,14 @@ class JSONTestSuite {
                 };
 
                 const context = ContextUtil.generateEmptyContext();
-                const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(file), 0, {});
+                const snapshot = new ActionSnapshot(
+                    'index.yml',
+                    actionHandler.getMetadata().id,
+                    {},
+                    dirname(file),
+                    0,
+                    {},
+                );
 
                 const processor = actionHandler.getProcessor(options, context, snapshot, {});
                 await processor.validate();
@@ -260,7 +267,14 @@ class JSONTestSuite {
                 };
 
                 const context = ContextUtil.generateEmptyContext();
-                const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(file), 0, {});
+                const snapshot = new ActionSnapshot(
+                    'index.yml',
+                    actionHandler.getMetadata().id,
+                    {},
+                    dirname(file),
+                    0,
+                    {},
+                );
 
                 const processor = actionHandler.getProcessor(options, context, snapshot, {});
                 await processor.validate();
@@ -314,7 +328,14 @@ class JSONTestSuite {
                 };
                 const context = ContextUtil.generateEmptyContext();
                 context.ctx.test = 'yes';
-                const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(file), 0, {});
+                const snapshot = new ActionSnapshot(
+                    'index.yml',
+                    actionHandler.getMetadata().id,
+                    {},
+                    dirname(file),
+                    0,
+                    {},
+                );
 
                 const processor = actionHandler.getProcessor(options, context, snapshot, {});
                 await processor.validate();

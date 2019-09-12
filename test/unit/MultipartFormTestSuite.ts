@@ -55,7 +55,7 @@ class MultipartFormTestSuite {
                 };
 
                 const context = ContextUtil.generateEmptyContext();
-                const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
+                const snapshot = new ActionSnapshot('index.yml', actionHandler.getMetadata().id, {}, '.', 0, {});
 
                 const processor = actionHandler.getProcessor(options, context, snapshot, {});
                 await processor.validate();
@@ -108,7 +108,7 @@ class MultipartFormTestSuite {
                 };
 
                 const context = ContextUtil.generateEmptyContext();
-                const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, '.', 0, {});
+                const snapshot = new ActionSnapshot('index.yml', actionHandler.getMetadata().id, {}, '.', 0, {});
 
                 const processor = actionHandler.getProcessor(options, context, snapshot, {});
                 await processor.validate();
@@ -183,7 +183,14 @@ class MultipartFormTestSuite {
                 };
 
                 const context = ContextUtil.generateEmptyContext();
-                const snapshot = new ActionSnapshot(actionHandler.getMetadata().id, {}, dirname(tempFile), 0, {});
+                const snapshot = new ActionSnapshot(
+                    'index.yml',
+                    actionHandler.getMetadata().id,
+                    {},
+                    dirname(tempFile),
+                    0,
+                    {},
+                );
 
                 const processor = actionHandler.getProcessor(options, context, snapshot, {});
                 await processor.validate();

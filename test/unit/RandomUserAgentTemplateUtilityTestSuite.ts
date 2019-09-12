@@ -9,7 +9,7 @@ class RandomUserAgentTemplateUtilityTestSuite {
     async generateRandomUserAgent(): Promise<void> {
         const fn = new RandomUserAgentTemplateUtility().getUtilities(
             ContextUtil.generateEmptyContext(),
-            new ActionSnapshot('', {}, '.', 0, {}),
+            new ActionSnapshot('index.yml', '', {}, '.', 0, {}),
             {},
         ).http.randomUserAgent;
 

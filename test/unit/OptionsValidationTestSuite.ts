@@ -19,7 +19,7 @@ class OptionsValidationTestSuite {
     async failJoiValidation() {
         const actionHandler = new HTTPRequestActionHandler();
         const context = ContextUtil.generateEmptyContext();
-        const snapshot = new ActionSnapshot('.', {}, '', 0, {});
+        const snapshot = new ActionSnapshot('index.yml', '.', {}, '', 0, {});
 
         await chai.expect(actionHandler.getProcessor([], context, snapshot, {}).validate()).to.be.rejected;
 
@@ -90,7 +90,7 @@ class OptionsValidationTestSuite {
     async passJoiValidation() {
         const actionHandler = new HTTPRequestActionHandler();
         const context = ContextUtil.generateEmptyContext();
-        const snapshot = new ActionSnapshot('.', {}, '', 0, {});
+        const snapshot = new ActionSnapshot('index.yml', '.', {}, '', 0, {});
 
         await actionHandler
             .getProcessor(
@@ -111,7 +111,7 @@ class OptionsValidationTestSuite {
     async failFileValidation() {
         const actionHandler = new HTTPRequestActionHandler();
         const context = ContextUtil.generateEmptyContext();
-        const snapshot = new ActionSnapshot('.', {}, '', 0, {});
+        const snapshot = new ActionSnapshot('index.yml', '.', {}, '', 0, {});
 
         await chai.expect(
             actionHandler
@@ -163,7 +163,7 @@ class OptionsValidationTestSuite {
 
         const actionHandler = new HTTPRequestActionHandler();
         const context = ContextUtil.generateEmptyContext();
-        const snapshot = new ActionSnapshot('.', {}, dirname(file), 0, {});
+        const snapshot = new ActionSnapshot('index.yml', '.', {}, dirname(file), 0, {});
 
         await actionHandler
             .getProcessor(
