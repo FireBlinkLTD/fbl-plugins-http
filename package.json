@@ -32,8 +32,8 @@
     "fbl": ">=1.10.0 <2.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "8.1.0",
-    "@commitlint/config-conventional": "8.1.0",
+    "@commitlint/cli": "8.2.0",
+    "@commitlint/config-conventional": "8.2.0",
     "@types/body-parser": "1.17.1",
     "@types/chai": "4.2.2",
     "@types/express": "4.17.1",
