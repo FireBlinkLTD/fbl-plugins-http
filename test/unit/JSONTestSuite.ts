@@ -22,13 +22,9 @@ class JSONTestSuite {
     private static async forEachAction(fn: Function): Promise<void> {
         const methods = ['DELETE', 'GET', 'PATCH', 'POST', 'PUT'];
 
-        await Promise.all(
-            methods.map(
-                (method: any): Promise<void> => {
-                    return fn(new HTTPRequestActionHandler(), method);
-                },
-            ),
-        );
+        for (const method of methods) {
+            await fn(new HTTPRequestActionHandler(), method);
+        }
     }
 
     @test()
@@ -113,6 +109,221 @@ class JSONTestSuite {
                 await processor.execute();
 
                 assert.strictEqual(context.ctx.response.code, 200);
+                assert.deepStrictEqual(context.ctx.response.body.method, method);
+                assert.deepStrictEqual(context.ctx.response.body.query, {
+                    string: 'yes',
+                    number: '10',
+                    array: 'no,1',
+                });
+
+                const request = JSON.parse(context.ctx.response.headers[0]['x-request']);
+                assert.strictEqual(request.headers['user-agent'], '@fbl-plugins/http (https://fbl.fireblink.com)');
+
+                assert.strictEqual(context.ctx.response.body.headers['x-test'], '1234');
+                assert.deepStrictEqual(context.ctx.response.body.body, {
+                    test: true,
+                });
+            },
+        );
+    }
+
+    @test()
+    async notInTheListOfSuccessfulCodes(): Promise<void> {
+        await JSONTestSuite.forEachAction(
+            async (
+                actionHandler: ActionHandler,
+                method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT',
+            ): Promise<void> => {
+                const options = {
+                    request: <IHTTPRequestOptions>{
+                        url: DummyServerWrapper.ENDPOINT + '/json',
+                        method: method,
+                        query: {
+                            string: 'yes',
+                            number: 10,
+                            array: ['no', 1],
+                        },
+                        headers: {
+                            'X-Test': '1234',
+                        },
+                        body: {
+                            json: {
+                                test: true,
+                            },
+                        },
+                    },
+                    response: <IHTTPResponseOptions>{
+                        statusCode: {
+                            successful: [209],
+                            assignTo: {
+                                ctx: '$.response.code',
+                            },
+                        },
+
+                        headers: {
+                            pushTo: '$.ctx.response.headers',
+                        },
+
+                        body: {
+                            assignTo: {
+                                ctx: '$.response.body',
+                                as: 'json',
+                            },
+                        },
+                    },
+                };
+
+                const context = ContextUtil.generateEmptyContext();
+                const snapshot = new ActionSnapshot('index.yml', actionHandler.getMetadata().id, {}, '.', 0, {});
+
+                const processor = actionHandler.getProcessor(options, context, snapshot, {});
+                await processor.validate();
+                await chai.expect(processor.execute()).to.be.rejected;
+
+                assert.strictEqual(context.ctx.response.code, 200);
+                assert.deepStrictEqual(context.ctx.response.body.method, method);
+                assert.deepStrictEqual(context.ctx.response.body.query, {
+                    string: 'yes',
+                    number: '10',
+                    array: 'no,1',
+                });
+
+                const request = JSON.parse(context.ctx.response.headers[0]['x-request']);
+                assert.strictEqual(request.headers['user-agent'], '@fbl-plugins/http (https://fbl.fireblink.com)');
+
+                assert.strictEqual(context.ctx.response.body.headers['x-test'], '1234');
+                assert.deepStrictEqual(context.ctx.response.body.body, {
+                    test: true,
+                });
+            },
+        );
+    }
+
+    @test()
+    async assignResponseTo500(): Promise<void> {
+        await JSONTestSuite.forEachAction(
+            async (
+                actionHandler: ActionHandler,
+                method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT',
+            ): Promise<void> => {
+                const options = {
+                    request: <IHTTPRequestOptions>{
+                        url: DummyServerWrapper.ENDPOINT + '/json/500',
+                        method: method,
+                        query: {
+                            string: 'yes',
+                            number: 10,
+                            array: ['no', 1],
+                        },
+                        headers: {
+                            'X-Test': '1234',
+                        },
+                        body: {
+                            json: {
+                                test: true,
+                            },
+                        },
+                    },
+                    response: <IHTTPResponseOptions>{
+                        statusCode: {
+                            assignTo: {
+                                ctx: '$.response.code',
+                            },
+                        },
+
+                        headers: {
+                            pushTo: '$.ctx.response.headers',
+                        },
+
+                        body: {
+                            assignTo: {
+                                ctx: '$.response.body',
+                                as: 'json',
+                            },
+                        },
+                    },
+                };
+
+                const context = ContextUtil.generateEmptyContext();
+                const snapshot = new ActionSnapshot('index.yml', actionHandler.getMetadata().id, {}, '.', 0, {});
+
+                const processor = actionHandler.getProcessor(options, context, snapshot, {});
+                await processor.validate();
+                await chai.expect(processor.execute()).to.be.rejected;
+
+                assert.strictEqual(context.ctx.response.code, 500);
+                assert.deepStrictEqual(context.ctx.response.body.method, method);
+                assert.deepStrictEqual(context.ctx.response.body.query, {
+                    string: 'yes',
+                    number: '10',
+                    array: 'no,1',
+                });
+
+                const request = JSON.parse(context.ctx.response.headers[0]['x-request']);
+                assert.strictEqual(request.headers['user-agent'], '@fbl-plugins/http (https://fbl.fireblink.com)');
+
+                assert.strictEqual(context.ctx.response.body.headers['x-test'], '1234');
+                assert.deepStrictEqual(context.ctx.response.body.body, {
+                    test: true,
+                });
+            },
+        );
+    }
+
+    @test()
+    async assignResponseTo500Successful(): Promise<void> {
+        await JSONTestSuite.forEachAction(
+            async (
+                actionHandler: ActionHandler,
+                method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT',
+            ): Promise<void> => {
+                const options = {
+                    request: <IHTTPRequestOptions>{
+                        url: DummyServerWrapper.ENDPOINT + '/json/500',
+                        method: method,
+                        query: {
+                            string: 'yes',
+                            number: 10,
+                            array: ['no', 1],
+                        },
+                        headers: {
+                            'X-Test': '1234',
+                        },
+                        body: {
+                            json: {
+                                test: true,
+                            },
+                        },
+                    },
+                    response: <IHTTPResponseOptions>{
+                        statusCode: {
+                            successful: [500],
+                            assignTo: {
+                                ctx: '$.response.code',
+                            },
+                        },
+
+                        headers: {
+                            pushTo: '$.ctx.response.headers',
+                        },
+
+                        body: {
+                            assignTo: {
+                                ctx: '$.response.body',
+                                as: 'json',
+                            },
+                        },
+                    },
+                };
+
+                const context = ContextUtil.generateEmptyContext();
+                const snapshot = new ActionSnapshot('index.yml', actionHandler.getMetadata().id, {}, '.', 0, {});
+
+                const processor = actionHandler.getProcessor(options, context, snapshot, {});
+                await processor.validate();
+                await processor.execute();
+
+                assert.strictEqual(context.ctx.response.code, 500);
                 assert.deepStrictEqual(context.ctx.response.body.method, method);
                 assert.deepStrictEqual(context.ctx.response.body.query, {
                     string: 'yes',

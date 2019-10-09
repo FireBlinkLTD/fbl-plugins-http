@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.0](https://github.com/FireBlinkLTD/fbl-plugins-http/releases/tag/1.0.4) - 2019-10-09
+
+## Added
+
+- Ability to specify list of successful response status codes.
+- Response body assignment even if request fails.
+
 ## [1.0.4](https://github.com/FireBlinkLTD/fbl-plugins-http/releases/tag/1.0.4) - 2019-01-15
 
 ### Updated

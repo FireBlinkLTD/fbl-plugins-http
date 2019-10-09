@@ -49,55 +49,22 @@ export class HTTPRequestService {
                 await FSUtil.mkdirp(dirname(targetFile));
 
                 snapshot.log(`Make ${requestOptions.method} request to ${requestOptions.url}`);
-                result = await this.makeRequestAndSaveBodyToFile(requestOptions.url, targetFile, gotRequestOptions);
+                result = await this.makeRequestAndSaveBodyToFile(
+                    requestOptions.url,
+                    targetFile,
+                    gotRequestOptions,
+                    responseOptions && responseOptions.statusCode && responseOptions.statusCode.successful,
+                );
                 snapshot.log(`Complete ${requestOptions.method} request to ${requestOptions.url}`);
                 if (responseOptions.body.assignTo || responseOptions.body.pushTo) {
                     result.body = await FSUtil.readFile(targetFile);
                 }
             } else {
-                result = await this.makeRequestAndSaveResponseToBuffer(requestOptions.url, gotRequestOptions);
-            }
-
-            if (
-                result.body &&
-                responseOptions &&
-                responseOptions.body &&
-                (responseOptions.body.assignTo || responseOptions.body.pushTo)
-            ) {
-                /* istanbul ignore else */
-                if (responseOptions.body.assignTo) {
-                    let asType = 'base64';
-                    if (typeof responseOptions.body.assignTo !== 'string' && responseOptions.body.assignTo.as) {
-                        asType = responseOptions.body.assignTo.as;
-                    }
-
-                    let content;
-                    if (asType === 'json') {
-                        content = JSON.parse(result.body.toString('utf8'));
-                    } else {
-                        content = result.body.toString(asType);
-                    }
-
-                    await ContextUtil.assignTo(context, parameters, snapshot, responseOptions.body.assignTo, content);
-                }
-
-                /* istanbul ignore else */
-                if (responseOptions.body.pushTo) {
-                    let as = 'base64';
-                    /* istanbul ignore else */
-                    if (typeof responseOptions.body.pushTo !== 'string' && responseOptions.body.pushTo.as) {
-                        as = responseOptions.body.pushTo.as;
-                    }
-
-                    let content;
-                    if (as === 'json') {
-                        content = JSON.parse(result.body.toString('utf8'));
-                    } else {
-                        content = result.body.toString(as);
-                    }
-
-                    await ContextUtil.pushTo(context, parameters, snapshot, responseOptions.body.pushTo, content);
-                }
+                result = await this.makeRequestAndSaveResponseToBuffer(
+                    requestOptions.url,
+                    gotRequestOptions,
+                    responseOptions && responseOptions.statusCode && responseOptions.statusCode.successful,
+                );
             }
         } catch (e) {
             /* istanbul ignore else */
@@ -110,12 +77,17 @@ export class HTTPRequestService {
                 result.headers = e.headers;
             }
 
+            /* istanbul ignore else */
+            if (e.body) {
+                result.body = e.body;
+            }
+
             throw e;
         } finally {
             /* istanbul ignore else */
             if (result && responseOptions) {
                 if (responseOptions.statusCode) {
-                    await ContextUtil.assignTo(
+                    ContextUtil.assignTo(
                         context,
                         parameters,
                         snapshot,
@@ -123,7 +95,7 @@ export class HTTPRequestService {
                         result.statusCode,
                     );
 
-                    await ContextUtil.pushTo(
+                    ContextUtil.pushTo(
                         context,
                         parameters,
                         snapshot,
@@ -133,7 +105,7 @@ export class HTTPRequestService {
                 }
 
                 if (responseOptions.headers) {
-                    await ContextUtil.assignTo(
+                    ContextUtil.assignTo(
                         context,
                         parameters,
                         snapshot,
@@ -141,13 +113,48 @@ export class HTTPRequestService {
                         result.headers,
                     );
 
-                    await ContextUtil.pushTo(
-                        context,
-                        parameters,
-                        snapshot,
-                        responseOptions.headers.pushTo,
-                        result.headers,
-                    );
+                    ContextUtil.pushTo(context, parameters, snapshot, responseOptions.headers.pushTo, result.headers);
+                }
+
+                if (
+                    result.body &&
+                    responseOptions.body &&
+                    (responseOptions.body.assignTo || responseOptions.body.pushTo)
+                ) {
+                    /* istanbul ignore else */
+                    if (responseOptions.body.assignTo) {
+                        let asType = 'base64';
+                        if (typeof responseOptions.body.assignTo !== 'string' && responseOptions.body.assignTo.as) {
+                            asType = responseOptions.body.assignTo.as;
+                        }
+
+                        let content;
+                        if (asType === 'json') {
+                            content = JSON.parse(result.body.toString('utf8'));
+                        } else {
+                            content = result.body.toString(asType);
+                        }
+
+                        ContextUtil.assignTo(context, parameters, snapshot, responseOptions.body.assignTo, content);
+                    }
+
+                    /* istanbul ignore else */
+                    if (responseOptions.body.pushTo) {
+                        let asType = 'base64';
+                        /* istanbul ignore else */
+                        if (typeof responseOptions.body.pushTo !== 'string' && responseOptions.body.pushTo.as) {
+                            asType = responseOptions.body.pushTo.as;
+                        }
+
+                        let content;
+                        if (asType === 'json') {
+                            content = JSON.parse(result.body.toString('utf8'));
+                        } else {
+                            content = result.body.toString(asType);
+                        }
+
+                        ContextUtil.pushTo(context, parameters, snapshot, responseOptions.body.pushTo, content);
+                    }
                 }
             }
         }
@@ -157,19 +164,26 @@ export class HTTPRequestService {
      * Make HTTP request that stores response in a buffer
      * @param url
      * @param options
+     * @param successfulStatusCodes
      */
     private async makeRequestAndSaveResponseToBuffer(
         url: string,
         options: got.GotOptions<any>,
+        successfulStatusCodes?: number[],
     ): Promise<{ statusCode: number; headers: IncomingHttpHeaders; body: Buffer | false }> {
         const ws = new WritableStreamBuffer();
-        const result = await this.makeStreamRequest(url, ws, options);
+        try {
+            const result = await this.makeStreamRequest(url, ws, options, successfulStatusCodes);
 
-        return {
-            statusCode: result.statusCode,
-            headers: result.headers,
-            body: ws.getContents(),
-        };
+            return {
+                statusCode: result.statusCode,
+                headers: result.headers,
+                body: ws.getContents(),
+            };
+        } catch (e) {
+            e.body = ws.getContents();
+            throw e;
+        }
     }
 
     /**
@@ -177,16 +191,18 @@ export class HTTPRequestService {
      * @param url
      * @param targetFile
      * @param options
+     * @param successfulStatusCodes
      */
     private async makeRequestAndSaveBodyToFile(
         url: string,
         targetFile: string,
         options: got.GotOptions<any>,
+        successfulStatusCodes?: number[],
     ): Promise<{ statusCode: number; headers: IncomingHttpHeaders }> {
         try {
             const ws = createWriteStream(targetFile);
 
-            return await this.makeStreamRequest(url, ws, options);
+            return await this.makeStreamRequest(url, ws, options, successfulStatusCodes);
         } catch (e) {
             const exists = await FSUtil.exists(targetFile);
             /* istanbul ignore else */
@@ -202,37 +218,43 @@ export class HTTPRequestService {
      * @param url
      * @param targetFile
      * @param options
+     * @param successfulStatusCodes
      */
     private async makeStreamRequest(
         url: string,
         ws: NodeJS.WritableStream,
         options: got.GotOptions<any>,
+        successfulStatusCodes?: number[],
     ): Promise<{ statusCode: number; headers: IncomingHttpHeaders }> {
         let statusCode: number;
         let headers: IncomingHttpHeaders;
 
-        try {
-            await new Promise((res, rej) => {
-                const stream = got.stream(url, options);
+        await new Promise((res, rej) => {
+            const stream = got.stream(url, options);
 
-                stream.on('response', (_response: got.Response<any>) => {
-                    statusCode = _response.statusCode;
-                    headers = _response.headers;
-                });
-
-                stream.pipe(ws);
-
-                ws.on('finish', res);
-                stream.on('error', (err: any) => {
-                    statusCode = statusCode || err.statusCode;
-                    headers = headers || err.headers;
-                    rej(err);
-                });
+            stream.on('response', (_response: got.Response<any>) => {
+                statusCode = _response.statusCode;
+                headers = _response.headers;
             });
-        } catch (e) {
-            e.statusCode = statusCode;
-            e.headers = headers;
-            throw e;
+
+            stream.pipe(ws);
+
+            ws.on('finish', res);
+            stream.on('error', rej);
+        });
+
+        if (successfulStatusCodes && successfulStatusCodes.indexOf(statusCode) < 0) {
+            const error = new Error(`Response code ${statusCode}`);
+            (<any>error).statusCode = statusCode;
+            (<any>error).headers = headers;
+            throw error;
+        }
+
+        if (!successfulStatusCodes && statusCode >= 300) {
+            const error = new Error(`Response code ${statusCode}`);
+            (<any>error).statusCode = statusCode;
+            (<any>error).headers = headers;
+            throw error;
         }
 
         return { statusCode, headers };
@@ -258,6 +280,7 @@ export class HTTPRequestService {
             method: requestOptions.method,
             headers: requestOptions.headers || {},
             timeout: (requestOptions.timeout || 60) * 1000,
+            throwHttpErrors: false,
         };
 
         /* istanbul ignore else */
@@ -374,7 +397,7 @@ export class HTTPRequestService {
         }
 
         if (!(options as got.GotBodyOptions<any>).body) {
-            (options as got.GotBodyOptions<any>).body = new Buffer(0);
+            (options as got.GotBodyOptions<any>).body = Buffer.from('');
         }
 
         return options;

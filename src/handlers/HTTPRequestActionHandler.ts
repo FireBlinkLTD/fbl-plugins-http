@@ -81,13 +81,17 @@ export class HTTPRequestActionProcessor extends ActionProcessor {
         const httpRequestService = Container.get(HTTPRequestService);
 
         // make request
-        await httpRequestService.makeRequest(
-            this.context,
-            this.snapshot,
-            this.parameters,
-            this.options.request,
-            this.options.response,
-        );
+        try {
+            await httpRequestService.makeRequest(
+                this.context,
+                this.snapshot,
+                this.parameters,
+                this.options.request,
+                this.options.response,
+            );
+        } catch (e) {
+            throw e;
+        }
     }
 }
 

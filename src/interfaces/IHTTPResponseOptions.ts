@@ -3,6 +3,7 @@ import { IPushTo } from './IPushTo';
 
 export interface IHTTPResponseOptions {
     statusCode?: {
+        successful?: number[];
         assignTo?: IAssignTo | string;
         pushTo?: IPushTo | string;
     };

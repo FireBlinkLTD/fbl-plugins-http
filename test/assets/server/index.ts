@@ -4,6 +4,7 @@ import { processSend } from './utils';
 import { json, urlencoded } from 'body-parser';
 import { join } from 'path';
 import { Form } from 'multiparty';
+import { EchoRouter500 } from './echo.router.500';
 
 const app = express();
 const port = 3000;
@@ -26,6 +27,7 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
 app.use('/static', express.static(join(__dirname, '../../../../test/assets/server/static')));
 
 app.use('/json', json(), EchoRouter);
+app.use('/json/500', json(), EchoRouter500);
 app.use('/form/urlencoded', urlencoded(), EchoRouter);
 app.use(
     '/form/multipart',

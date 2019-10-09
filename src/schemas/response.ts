@@ -12,6 +12,12 @@ const FBL_PLUGIN_HTTP_RESPONSE_SCHEMA = Joi.object()
     .keys({
         statusCode: Joi.object()
             .keys({
+                successful: Joi.array().items(
+                    Joi.number()
+                        .min(100)
+                        .max(599)
+                        .integer(),
+                ),
                 assignTo: FBL_ASSIGN_TO_SCHEMA,
                 pushTo: FBL_PUSH_TO_SCHEMA,
             })
