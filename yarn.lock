@@ -5689,10 +5689,10 @@ use@^3.1.0:
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
 
-user-agents@1.0.412:
-  version "1.0.412"
-  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.412.tgz#c356334c341bf1448393ee9258273b4cb7686f31"
-  integrity sha512-l1d4rqMtuQUhyIZj9Q6JhCKYLqJ4rVinI80lES+lgey+ejWYG9DOpeZ2lGWHQFsAf/YH4dQSpGjHCxTDHemY3Q==
+user-agents@1.0.414:
+  version "1.0.414"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.414.tgz#d5f6780e79b32a811085e3e5a321e5cfd65eb69d"
+  integrity sha512-3EwjGq7co+PMpHhCOzXeB+DiitJU3Rb4l16lk+w1d0y5ri+2qk9P8Iv7kZeHMauxO6fdQQpoIJePhZmMFQogHw==
   dependencies:
     dot-json "^1.1.0"
     lodash.clonedeep "^4.5.0"
