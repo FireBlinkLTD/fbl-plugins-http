@@ -410,10 +410,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.7.1.tgz#3b5c3a26393c19b400844ac422bd0f631a94d69d"
   integrity sha512-aK9jxMypeSrhiYofWWBf/T7O+KwaiAHzM4sveCdWPn71lzUSMimRnKzhXDKfKwV1kWoBo2P1aGgaIYGLf9/ljw==
 
-"@types/node@12.12.5":
-  version "12.12.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.5.tgz#66103d2eddc543d44a04394abb7be52506d7f290"
-  integrity sha512-KEjODidV4XYUlJBF3XdjSH5FWoMCtO0utnhtdLf1AgeuZLOrRbvmU/gaRCVg7ZaQDjVf3l84egiY0mRNe5xE4A==
+"@types/node@12.12.6":
+  version "12.12.6"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.6.tgz#a47240c10d86a9a57bb0c633f0b2e0aea9ce9253"
+  integrity sha512-FjsYUPzEJdGXjwKqSpE0/9QEh6kzhTAeObA54rn6j3rR4C/mzpI9L0KNfoeASSPMMdxIsoJuCLDWcM/rVjIsSA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -5697,10 +5697,10 @@ use@^3.1.0:
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
 
-user-agents@1.0.431:
-  version "1.0.431"
-  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.431.tgz#b5293b81d5f72eb27bcec03cfe86220295fc04ae"
-  integrity sha512-D78WpIn7ml71zXqn+ZB+pizNvFqI0d0Ed9/T1StyA55u/qw47QG5IKzuFFRx+x5b4C/t71VQqrF5BhB+AO3ITg==
+user-agents@1.0.432:
+  version "1.0.432"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.432.tgz#d3d27056a6d185eb7d8eaf5a924d464118984567"
+  integrity sha512-EsGx9Mvkw1r+mh3aqhMKqMCC8aQeql+2TFXVfRPn8sRuG5iWnSDKQO/Oi2Z263dEQXUJLYhUS/yisZnC4mCuSQ==
   dependencies:
     dot-json "^1.1.0"
     lodash.clonedeep "^4.5.0"
