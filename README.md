@@ -2,7 +2,8 @@
 
 Make REST calls. Submit forms, upload and download files through HTTP(s) protocol. All these and a little bit more you can do with HTTP plugin for [fbl](https://fbl.fireblink.com).
 
-[![CircleCI](https://circleci.com/gh/FireBlinkLTD/fbl-plugins-http.svg?style=svg)](https://circleci.com/gh/FireBlinkLTD/fbl-plugins-http) [![Greenkeeper badge](https://badges.greenkeeper.io/FireBlinkLTD/fbl-plugins-http.svg)](https://greenkeeper.io/)
+[![CircleCI](https://circleci.com/gh/FireBlinkLTD/fbl-plugins-http.svg?style=svg)](https://circleci.com/gh/FireBlinkLTD/fbl-plugins-http) 
+[![Known Vulnerabilities](https://snyk.io/test/github/FireBlinkLTD/fbl-plugins-http/badge.svg)](https://snyk.io/test/github/FireBlinkLTD/fbl-plugins-http)
 [![codecov](https://codecov.io/gh/FireBlinkLTD/fbl-plugins-http/branch/master/graph/badge.svg)](https://codecov.io/gh/FireBlinkLTD/fbl-plugins-http)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/FireBlinkLTD/fbl-plugins-http.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/FireBlinkLTD/fbl-plugins-http/alerts/)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/FireBlinkLTD/fbl-plugins-http.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/FireBlinkLTD/fbl-plugins-http/context:javascript)
