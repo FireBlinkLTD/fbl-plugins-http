@@ -4,7 +4,7 @@
   "description": "fbl plugin to make http requests",
   "main": "dist/index.js",
   "engines": {
-    "node": ">=8.12.0"
+    "node": ">=10.19.0"
   },
   "scripts": {
     "commit": "npx git-cz",
