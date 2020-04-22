@@ -51,7 +51,7 @@ export class HTTPRequestService {
                     parameters,
                     requestOptions,
                     targetFile,
-                    responseOptions && responseOptions.statusCode && responseOptions.statusCode.successful,
+                    responseOptions.statusCode && responseOptions.statusCode.successful,
                 );
                 snapshot.log(`Complete ${requestOptions.method} request to ${requestOptions.url}`);
                 if (responseOptions.body.assignTo || responseOptions.body.pushTo) {
