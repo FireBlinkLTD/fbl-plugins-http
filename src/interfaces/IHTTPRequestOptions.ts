@@ -1,8 +1,8 @@
 export interface IHTTPRequestOptions {
     method: 'DELETE' | 'GET' | 'PATCH' | 'POST' | 'PUT';
     url: string;
-    query?: { [key: string]: string | number | (string | number)[] };
-    headers?: { [key: string]: number | string | string[] };
+    query?: Record<string, string | number | boolean | null | (string | number | boolean | null)[]>;
+    headers?: Record<string, string | string[]>;
     body?: {
         form?: {
             multipart?: {

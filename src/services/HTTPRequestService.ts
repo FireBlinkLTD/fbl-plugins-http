@@ -1,10 +1,8 @@
 import { ActionSnapshot, FSUtil, ContextUtil, IContext, IDelegatedParameters, FlowService } from 'fbl';
 import { Service, Inject } from 'typedi';
 import { IHTTPRequestOptions, IHTTPResponseOptions } from '../interfaces';
-import * as got from 'got';
-import { URLSearchParams } from 'url';
-import * as FormData from 'form-data';
-import { createReadStream, createWriteStream, unlink } from 'fs';
+import * as superagent from 'superagent';
+import { createWriteStream, unlink } from 'fs';
 import { dirname } from 'path';
 import { promisify } from 'util';
 import { IncomingHttpHeaders } from 'http';
@@ -31,8 +29,6 @@ export class HTTPRequestService {
         requestOptions: IHTTPRequestOptions,
         responseOptions?: IHTTPResponseOptions,
     ) {
-        const gotRequestOptions = await this.prepareGotRequestOptions(context, snapshot, parameters, requestOptions);
-
         let result: {
             statusCode: number;
             headers: IncomingHttpHeaders;
@@ -50,9 +46,11 @@ export class HTTPRequestService {
 
                 snapshot.log(`Make ${requestOptions.method} request to ${requestOptions.url}`);
                 result = await this.makeRequestAndSaveBodyToFile(
-                    requestOptions.url,
+                    context,
+                    snapshot,
+                    parameters,
+                    requestOptions,
                     targetFile,
-                    gotRequestOptions,
                     responseOptions && responseOptions.statusCode && responseOptions.statusCode.successful,
                 );
                 snapshot.log(`Complete ${requestOptions.method} request to ${requestOptions.url}`);
@@ -61,8 +59,10 @@ export class HTTPRequestService {
                 }
             } else {
                 result = await this.makeRequestAndSaveResponseToBuffer(
-                    requestOptions.url,
-                    gotRequestOptions,
+                    context,
+                    snapshot,
+                    parameters,
+                    requestOptions,
                     responseOptions && responseOptions.statusCode && responseOptions.statusCode.successful,
                 );
             }
@@ -162,18 +162,24 @@ export class HTTPRequestService {
 
     /**
      * Make HTTP request that stores response in a buffer
-     * @param url
-     * @param options
-     * @param successfulStatusCodes
      */
     private async makeRequestAndSaveResponseToBuffer(
-        url: string,
-        options: got.GotOptions<any>,
+        context: IContext,
+        snapshot: ActionSnapshot,
+        parameters: IDelegatedParameters,
+        options: IHTTPRequestOptions,
         successfulStatusCodes?: number[],
     ): Promise<{ statusCode: number; headers: IncomingHttpHeaders; body: Buffer | false }> {
         const ws = new WritableStreamBuffer();
         try {
-            const result = await this.makeStreamRequest(url, ws, options, successfulStatusCodes);
+            const result = await this.makeStreamRequest(
+                context,
+                snapshot,
+                parameters,
+                options,
+                ws,
+                successfulStatusCodes,
+            );
 
             return {
                 statusCode: result.statusCode,
@@ -188,21 +194,19 @@ export class HTTPRequestService {
 
     /**
      * Make HTTP request that stores response body in file
-     * @param url
-     * @param targetFile
-     * @param options
-     * @param successfulStatusCodes
      */
     private async makeRequestAndSaveBodyToFile(
-        url: string,
+        context: IContext,
+        snapshot: ActionSnapshot,
+        parameters: IDelegatedParameters,
+        options: IHTTPRequestOptions,
         targetFile: string,
-        options: got.GotOptions<any>,
         successfulStatusCodes?: number[],
     ): Promise<{ statusCode: number; headers: IncomingHttpHeaders }> {
         try {
             const ws = createWriteStream(targetFile);
 
-            return await this.makeStreamRequest(url, ws, options, successfulStatusCodes);
+            return await this.makeStreamRequest(context, snapshot, parameters, options, ws, successfulStatusCodes);
         } catch (e) {
             const exists = await FSUtil.exists(targetFile);
             /* istanbul ignore else */
@@ -215,33 +219,16 @@ export class HTTPRequestService {
 
     /**
      * Make HTTP request that writes response body to stream
-     * @param url
-     * @param targetFile
-     * @param options
-     * @param successfulStatusCodes
      */
     private async makeStreamRequest(
-        url: string,
+        context: IContext,
+        snapshot: ActionSnapshot,
+        parameters: IDelegatedParameters,
+        options: IHTTPRequestOptions,
         ws: NodeJS.WritableStream,
-        options: got.GotOptions<any>,
         successfulStatusCodes?: number[],
     ): Promise<{ statusCode: number; headers: IncomingHttpHeaders }> {
-        let statusCode: number;
-        let headers: IncomingHttpHeaders;
-
-        await new Promise((res, rej) => {
-            const stream = got.stream(url, options);
-
-            stream.on('response', (_response: got.Response<any>) => {
-                statusCode = _response.statusCode;
-                headers = _response.headers;
-            });
-
-            stream.pipe(ws);
-
-            ws.on('finish', res);
-            stream.on('error', rej);
-        });
+        const { statusCode, headers } = await this.prepareRequest(context, snapshot, parameters, options, ws);
 
         if (successfulStatusCodes && successfulStatusCodes.indexOf(statusCode) < 0) {
             const error = new Error(`Response code ${statusCode}`);
@@ -260,103 +247,68 @@ export class HTTPRequestService {
         return { statusCode, headers };
     }
 
-    /**
-     * Prepare request options for 'got' module.
-     * @param {IContext} context
-     * @param {ActionSnapshot} snapshot
-     * @param {IDelegatedParameters} parameters
-     * @param {IHTTPRequestOptions} requestOptions
-     * @param {IHTTPRequestOptions} requestOptions
-     * @param {IHTTPRequestOptions} requestOptions
-     * @return {got.GotOptions}
-     */
-    private async prepareGotRequestOptions(
+    private async prepareRequest(
         context: IContext,
         snapshot: ActionSnapshot,
         parameters: IDelegatedParameters,
-        requestOptions: IHTTPRequestOptions,
-    ): Promise<got.GotOptions<any>> {
-        const options: got.GotOptions<any> = {
-            method: requestOptions.method,
-            headers: requestOptions.headers || {},
-            timeout: (requestOptions.timeout || 60) * 1000,
-            throwHttpErrors: false,
-        };
+        options: IHTTPRequestOptions,
+        ws: NodeJS.WritableStream,
+    ): Promise<{
+        statusCode: number;
+        headers: any;
+    }> {
+        let client = superagent(options.method, options.url).timeout((options.timeout || 60) * 1000);
 
-        /* istanbul ignore else */
+        if (options.headers) {
+            client = client.set(options.headers);
+        }
+
         if (!isHeaderExists(options.headers, 'user-agent')) {
-            options.headers['user-agent'] = '@fbl-plugins/http (https://fbl.fireblink.com)';
+            client = client.set('user-agent', '@fbl-plugins/http (https://fbl.fireblink.com)');
         }
 
-        if (requestOptions.query) {
-            const queryParams = new URLSearchParams();
-            for (const key of Object.keys(requestOptions.query)) {
-                let value: any = requestOptions.query[key];
-                if (Array.isArray(value)) {
-                    value = value.map(item => item.toString());
-                } else {
-                    value = value.toString();
-                }
-                queryParams.append(key, value);
-            }
-            options.query = queryParams;
+        if (options.query) {
+            client = client.query(options.query);
         }
 
-        if (requestOptions.body) {
-            if (requestOptions.body.form) {
+        if (options.body) {
+            if (options.body.form) {
                 /* istanbul ignore else */
-                if (requestOptions.body.form.urlencoded) {
-                    if (!isHeaderExists(options.headers, 'content-type')) {
-                        options.headers['content-type'] = 'application/x-www-form-urlencoded';
-                    }
-
-                    const empty =
-                        !requestOptions.body.form.urlencoded ||
-                        Object.keys(requestOptions.body.form.urlencoded).length === 0;
-                    if (!empty) {
-                        (options as got.GotFormOptions<any>).form = true;
-                        (options as got.GotFormOptions<any>).body = requestOptions.body.form.urlencoded;
-                    }
+                if (options.body.form.urlencoded) {
+                    client = client.type('form').send(options.body.form.urlencoded);
                 }
 
                 /* istanbul ignore else */
-                if (requestOptions.body.form.multipart) {
-                    const form = new FormData();
+                if (options.body.form.multipart) {
                     /* istanbul ignore else */
-                    if (requestOptions.body.form.multipart.fields) {
-                        for (const key of Object.keys(requestOptions.body.form.multipart.fields)) {
-                            form.append(key, requestOptions.body.form.multipart.fields[key].toString());
+                    if (options.body.form.multipart.fields) {
+                        for (const key of Object.keys(options.body.form.multipart.fields)) {
+                            client = client.field(key, options.body.form.multipart.fields[key].toString());
                         }
                     }
 
                     /* istanbul ignore else */
-                    if (requestOptions.body.form.multipart.files) {
-                        for (const key of Object.keys(requestOptions.body.form.multipart.files)) {
-                            const path = FSUtil.getAbsolutePath(
-                                requestOptions.body.form.multipart.files[key],
-                                snapshot.wd,
-                            );
-                            form.append(key, createReadStream(path));
+                    if (options.body.form.multipart.files) {
+                        for (const key of Object.keys(options.body.form.multipart.files)) {
+                            const path = FSUtil.getAbsolutePath(options.body.form.multipart.files[key], snapshot.wd);
+                            client = client.attach(key, path);
                         }
                     }
-
-                    (options as got.GotBodyOptions<any>).body = form;
                 }
             }
 
-            if (requestOptions.body.json) {
-                (options as got.GotBodyOptions<any>).body = JSON.stringify(requestOptions.body.json);
-                options.headers['content-type'] = 'application/json';
+            if (options.body.json) {
+                client = client.send(options.body.json);
             }
 
-            if (requestOptions.body.file) {
+            if (options.body.file) {
                 let path;
                 let template = false;
-                if (typeof requestOptions.body.file === 'string') {
-                    path = requestOptions.body.file;
+                if (typeof options.body.file === 'string') {
+                    path = options.body.file;
                 } else {
-                    path = requestOptions.body.file.path;
-                    template = requestOptions.body.file.template;
+                    path = options.body.file.path;
+                    template = options.body.file.template;
                 }
 
                 // find out absolute path
@@ -365,11 +317,12 @@ export class HTTPRequestService {
                 /* istanbul ignore else */
                 if (!isHeaderExists(options.headers, 'content-type')) {
                     /* istanbul ignore next */
-                    options.headers['content-type'] = lookup(path) || 'application/octet-stream';
+                    client.set('content-type', lookup(path) || 'application/octet-stream');
                 }
 
                 if (!template) {
-                    (options as got.GotBodyOptions<any>).body = createReadStream(path);
+                    const content = await FSUtil.readTextFile(path);
+                    client = client.send(content);
                 } else {
                     let content = await FSUtil.readTextFile(path);
 
@@ -391,15 +344,28 @@ export class HTTPRequestService {
                         parameters,
                     );
 
-                    (options as got.GotBodyOptions<any>).body = content;
+                    client = client.send(content);
                 }
             }
         }
 
-        if (!(options as got.GotBodyOptions<any>).body) {
-            (options as got.GotBodyOptions<any>).body = Buffer.from('');
-        }
+        client.pipe(ws);
 
-        return options;
+        let statusCode;
+        let headers;
+        client.on('response', (res) => {
+            statusCode = res.status;
+            headers = res.header;
+        });
+
+        await new Promise((res, rej) => {
+            ws.on('finish', res);
+            client.on('error', rej);
+        });
+
+        return {
+            statusCode,
+            headers,
+        };
     }
 }

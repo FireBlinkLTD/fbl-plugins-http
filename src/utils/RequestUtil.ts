@@ -4,11 +4,15 @@
  * @param name
  */
 export function getHeader(
-    headers: { [key: string]: number | string | string[] },
+    headers: { [key: string]: number | string | string[] } | null,
     name: string,
 ): string | number | string[] | null {
+    if (!headers) {
+        return null;
+    }
+
     const names = Object.keys(headers);
-    const idx = names.map(key => key.toLowerCase()).indexOf(name.toLowerCase());
+    const idx = names.map((key) => key.toLowerCase()).indexOf(name.toLowerCase());
 
     if (idx < 0) {
         return null;

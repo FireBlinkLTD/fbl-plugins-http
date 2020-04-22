@@ -10,7 +10,9 @@ const app = express();
 const port = 3000;
 
 app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.log(`-> Received ${req.method} request on ${req.path}`);
+    console.log(
+        `-> Received ${req.method} request on ${req.path} with query: ${req.query && JSON.stringify(req.query)}`,
+    );
 
     res.header(
         'x-request',
@@ -34,7 +36,7 @@ app.use(
     (req: express.Request, res: express.Response, next: express.NextFunction) => {
         const form = new Form();
 
-        form.parse(req, function(err: Error, fields: any, files: any) {
+        form.parse(req, function (err: Error, fields: any, files: any) {
             if (err) {
                 return next(err);
             }

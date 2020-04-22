@@ -79,6 +79,7 @@ class MultipartFormTestSuite {
                             test: 'yes',
                         },
                         headers: {
+                            'user-agent': 'test',
                             'X-Test': '1234',
                         },
                         body: {
@@ -118,6 +119,7 @@ class MultipartFormTestSuite {
                 assert.deepStrictEqual(context.ctx.response.body.method, method);
                 assert.deepStrictEqual(context.ctx.response.body.query, options.request.query);
                 assert.strictEqual(context.ctx.response.body.headers['x-test'], '1234');
+                assert.strictEqual(context.ctx.response.body.headers['user-agent'], 'test');
                 assert.deepStrictEqual(context.ctx.response.body.body, {
                     fields: {
                         test: ['form'],

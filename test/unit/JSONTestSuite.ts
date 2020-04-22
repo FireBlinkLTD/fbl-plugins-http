@@ -70,7 +70,7 @@ class JSONTestSuite {
                         query: {
                             string: 'yes',
                             number: 10,
-                            array: ['no', 1],
+                            array: ['no', '1'],
                         },
                         headers: {
                             'X-Test': '1234',
@@ -113,7 +113,7 @@ class JSONTestSuite {
                 assert.deepStrictEqual(context.ctx.response.body.query, {
                     string: 'yes',
                     number: '10',
-                    array: 'no,1',
+                    array: ['no', '1'],
                 });
 
                 const request = JSON.parse(context.ctx.response.headers[0]['x-request']);
@@ -141,7 +141,7 @@ class JSONTestSuite {
                         query: {
                             string: 'yes',
                             number: 10,
-                            array: ['no', 1],
+                            array: ['no', '1'],
                         },
                         headers: {
                             'X-Test': '1234',
@@ -185,7 +185,7 @@ class JSONTestSuite {
                 assert.deepStrictEqual(context.ctx.response.body.query, {
                     string: 'yes',
                     number: '10',
-                    array: 'no,1',
+                    array: ['no', '1'],
                 });
 
                 const request = JSON.parse(context.ctx.response.headers[0]['x-request']);
@@ -213,7 +213,7 @@ class JSONTestSuite {
                         query: {
                             string: 'yes',
                             number: 10,
-                            array: ['no', 1],
+                            array: ['no', '1'],
                         },
                         headers: {
                             'X-Test': '1234',
@@ -256,7 +256,7 @@ class JSONTestSuite {
                 assert.deepStrictEqual(context.ctx.response.body.query, {
                     string: 'yes',
                     number: '10',
-                    array: 'no,1',
+                    array: ['no', '1'],
                 });
 
                 const request = JSON.parse(context.ctx.response.headers[0]['x-request']);
@@ -284,7 +284,7 @@ class JSONTestSuite {
                         query: {
                             string: 'yes',
                             number: 10,
-                            array: ['no', 1],
+                            array: ['no', '1'],
                         },
                         headers: {
                             'X-Test': '1234',
@@ -328,7 +328,7 @@ class JSONTestSuite {
                 assert.deepStrictEqual(context.ctx.response.body.query, {
                     string: 'yes',
                     number: '10',
-                    array: 'no,1',
+                    array: ['no', '1'],
                 });
 
                 const request = JSON.parse(context.ctx.response.headers[0]['x-request']);
