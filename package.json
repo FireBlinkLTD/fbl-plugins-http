@@ -22,7 +22,7 @@
   "dependencies": {
     "@types/superagent": "4.1.7",
     "form-data": "3.0.0",
-    "got": "11.0.2",
+    "got": "11.0.3",
     "joi": "14.3.1",
     "mime-types": "2.1.26",
     "stream-buffers": "3.0.2",
