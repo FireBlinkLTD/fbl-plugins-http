@@ -20,7 +20,7 @@
   "author": "FireBlink LTD",
   "license": "MIT",
   "dependencies": {
-    "@types/superagent": "4.1.7",
+    "@types/superagent": "4.1.8",
     "form-data": "3.0.0",
     "got": "11.0.2",
     "joi": "14.3.1",
