@@ -29,7 +29,7 @@ export class HTTPRequestActionProcessor extends ActionProcessor {
     /**
      * @inheritdoc
      */
-    getValidationSchema(): Joi.SchemaLike {
+    getValidationSchema(): Joi.Schema {
         return HTTPRequestActionProcessor.schema;
     }
 

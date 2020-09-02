@@ -1,6 +1,6 @@
 requires:
   plugins:
-    '@fbl-plugins/http': '>=0.0.1'
+    '@fbl-plugins/http': '>=1.4.0-beta.0'
 
 pipeline:
   ctx:

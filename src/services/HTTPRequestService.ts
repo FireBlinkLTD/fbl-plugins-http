@@ -123,7 +123,7 @@ export class HTTPRequestService {
                 ) {
                     /* istanbul ignore else */
                     if (responseOptions.body.assignTo) {
-                        let asType = 'base64';
+                        let asType: BufferEncoding | 'json' = 'base64';
                         if (typeof responseOptions.body.assignTo !== 'string' && responseOptions.body.assignTo.as) {
                             asType = responseOptions.body.assignTo.as;
                         }
@@ -140,7 +140,7 @@ export class HTTPRequestService {
 
                     /* istanbul ignore else */
                     if (responseOptions.body.pushTo) {
-                        let asType = 'base64';
+                        let asType: BufferEncoding | 'json' = 'base64';
                         /* istanbul ignore else */
                         if (typeof responseOptions.body.pushTo !== 'string' && responseOptions.body.pushTo.as) {
                             asType = responseOptions.body.pushTo.as;
