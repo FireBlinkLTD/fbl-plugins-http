@@ -1,11 +1,8 @@
 {
   "name": "@fbl-plugins/http",
-  "version": "1.4.0-beta.0",
+  "version": "1.4.0",
   "description": "fbl plugin to make http requests",
   "main": "dist/index.js",
-  "engines": {
-    "node": ">=10.19.0"
-  },
   "scripts": {
     "commit": "npx git-cz",
     "commit:retry": "npx git-cz --retry",
@@ -31,7 +28,7 @@
     "user-agents": "1.0.559"
   },
   "peerDependencies": {
-    "fbl": ">=1.14.0-beta.3 <2.0.0"
+    "fbl": ">=1.14.0 <2.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "9.1.2",
