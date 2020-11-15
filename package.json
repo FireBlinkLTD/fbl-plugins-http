@@ -20,7 +20,7 @@
     "@types/superagent": "4.1.10",
     "form-data": "3.0.0",
     "got": "11.6.0",
-    "joi": "17.2.1",
+    "joi": "17.3.0",
     "mime-types": "2.1.27",
     "stream-buffers": "3.0.2",
     "superagent": "^6.1.0",
