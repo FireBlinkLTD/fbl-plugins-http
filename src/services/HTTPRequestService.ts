@@ -1,5 +1,4 @@
 import { ActionSnapshot, FSUtil, ContextUtil, IContext, IDelegatedParameters, FlowService } from 'fbl';
-import { Service, Inject } from 'typedi';
 import { IHTTPRequestOptions, IHTTPResponseOptions } from '../interfaces';
 import * as superagent from 'superagent';
 import { createWriteStream, unlink } from 'fs';
@@ -10,10 +9,22 @@ import { WritableStreamBuffer } from 'stream-buffers';
 import { lookup } from 'mime-types';
 import { isHeaderExists } from '../utils/RequestUtil';
 
-@Service()
 export class HTTPRequestService {
-    @Inject(() => FlowService)
-    flowService: FlowService;
+    private constructor() {}
+
+    private static pInstance: HTTPRequestService;
+    public static get instance(): HTTPRequestService {
+        if (!this.pInstance) {
+            this.pInstance = new HTTPRequestService();
+        }
+
+        return this.pInstance;
+    }
+
+    /* istanbul ignore next */
+    public static reset() {
+        this.pInstance = null;
+    }
 
     /**
      * Make HTTP request
@@ -327,7 +338,7 @@ export class HTTPRequestService {
                     let content = await FSUtil.readTextFile(path);
 
                     // resolve with global template delimiter first
-                    content = await this.flowService.resolveTemplate(
+                    content = await FlowService.instance.resolveTemplate(
                         context.ejsTemplateDelimiters.global,
                         content,
                         context,
@@ -336,7 +347,7 @@ export class HTTPRequestService {
                     );
 
                     // resolve local template delimiter
-                    content = await this.flowService.resolveTemplate(
+                    content = await FlowService.instance.resolveTemplate(
                         context.ejsTemplateDelimiters.local,
                         content,
                         context,

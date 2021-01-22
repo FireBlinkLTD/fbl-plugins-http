@@ -1,5 +1,4 @@
 import { suite, test } from 'mocha-typescript';
-import { Container } from 'typedi';
 import { DummyServerWrapper } from '../assets/dummy.http.server.wrapper';
 import { HTTPRequestActionHandler } from '../../src/handlers';
 import { ActionHandler, ActionSnapshot, ContextUtil } from 'fbl';
@@ -12,10 +11,6 @@ chai.use(chaiAsPromised);
 
 @suite()
 class URLEncodedFormTestSuite {
-    async after(): Promise<void> {
-        Container.reset();
-    }
-
     private static async forEachAction(fn: Function): Promise<void> {
         const methods = ['DELETE', 'GET', 'PATCH', 'POST', 'PUT'];
 

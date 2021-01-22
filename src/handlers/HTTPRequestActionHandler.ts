@@ -9,7 +9,6 @@ import {
 } from 'fbl';
 
 import * as Joi from 'joi';
-import Container from 'typedi';
 
 import { FBL_PLUGIN_HTTP_REQUEST_SCHEMA, FBL_PLUGIN_HTTP_RESPONSE_SCHEMA } from '../schemas';
 import { HTTPRequestService } from '../services';
@@ -78,7 +77,7 @@ export class HTTPRequestActionProcessor extends ActionProcessor {
      * @inheritdoc
      */
     async execute(): Promise<void> {
-        const httpRequestService = Container.get(HTTPRequestService);
+        const httpRequestService = HTTPRequestService.instance;
 
         // make request
         try {
