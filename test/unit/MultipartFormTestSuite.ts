@@ -1,6 +1,5 @@
 import { ActionHandler, ActionSnapshot, ContextUtil, TempPathsRegistry } from 'fbl';
 import { suite, test } from 'mocha-typescript';
-import { Container } from 'typedi';
 import { DummyServerWrapper } from '../assets/dummy.http.server.wrapper';
 import { HTTPRequestActionHandler } from '../../src/handlers';
 import * as assert from 'assert';
@@ -15,10 +14,6 @@ chai.use(chaiAsPromised);
 
 @suite()
 class MultipartFormTestSuite {
-    async after(): Promise<void> {
-        Container.reset();
-    }
-
     private static async forEachAction(fn: Function): Promise<void> {
         const methods = ['DELETE', 'GET', 'PATCH', 'POST', 'PUT'];
 
@@ -132,7 +127,7 @@ class MultipartFormTestSuite {
 
     @test()
     async pushResponseTo(): Promise<void> {
-        const tempPathsRegistry = Container.get(TempPathsRegistry);
+        const tempPathsRegistry = TempPathsRegistry.instance;
         const tempFile = await tempPathsRegistry.createTempFile();
 
         let content = '';

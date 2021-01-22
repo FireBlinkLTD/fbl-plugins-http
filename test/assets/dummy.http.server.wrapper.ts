@@ -20,11 +20,11 @@ export class DummyServerWrapper {
             silent: true,
         });
 
-        this.server.stdout.on('data', data => {
+        this.server.stdout.on('data', (data) => {
             console.error(`-> Server.stdout: ${data.toString().trim()}`);
         });
 
-        this.server.stderr.on('data', data => {
+        this.server.stderr.on('data', (data) => {
             console.error(`-> Server.stderr: ${data.toString().trim()}`);
         });
 
@@ -38,7 +38,7 @@ export class DummyServerWrapper {
             }
         });
 
-        await new Promise((resolve, reject) => {
+        await new Promise<void>((resolve, reject) => {
             this.server.on('message', (msg: any) => {
                 if (msg.name === 'started') {
                     return resolve();
@@ -56,7 +56,7 @@ export class DummyServerWrapper {
             console.log('-> Killing server...');
 
             // give system time to free port
-            await new Promise(resolve => {
+            await new Promise((resolve) => {
                 this.onServerClose = resolve;
                 this.server.kill('SIGINT');
             });

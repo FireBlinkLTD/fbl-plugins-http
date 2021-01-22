@@ -1,7 +1,6 @@
 import { ActionSnapshot, ContextUtil, FSUtil, TempPathsRegistry } from 'fbl';
 import { suite, test } from 'mocha-typescript';
 import { DummyServerWrapper } from '../assets/dummy.http.server.wrapper';
-import { Container } from 'typedi';
 import { basename, dirname } from 'path';
 import * as assert from 'assert';
 import { HTTPRequestActionHandler } from '../../src/handlers';
@@ -15,7 +14,7 @@ chai.use(chaiAsPromised);
 class FileDownloadTestSuite {
     @test()
     async downloadFile(): Promise<void> {
-        const targetFile = await Container.get(TempPathsRegistry).createTempFile();
+        const targetFile = await TempPathsRegistry.instance.createTempFile();
 
         const options = {
             request: {
@@ -120,7 +119,7 @@ class FileDownloadTestSuite {
 
     @test()
     async failOn404() {
-        const targetFile = await Container.get(TempPathsRegistry).createTempFile();
+        const targetFile = await TempPathsRegistry.instance.createTempFile();
 
         const options = {
             request: <IHTTPRequestOptions>{

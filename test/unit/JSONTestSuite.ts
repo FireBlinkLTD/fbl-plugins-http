@@ -1,6 +1,5 @@
 import { ActionHandler, ActionSnapshot, ContextUtil, FSUtil, TempPathsRegistry } from 'fbl';
 import { suite, test } from 'mocha-typescript';
-import { Container } from 'typedi';
 import { DummyServerWrapper } from '../assets/dummy.http.server.wrapper';
 import { HTTPRequestActionHandler } from '../../src/handlers';
 import * as assert from 'assert';
@@ -15,10 +14,6 @@ chai.use(chaiAsPromised);
 
 @suite()
 class JSONTestSuite {
-    async after(): Promise<void> {
-        Container.reset();
-    }
-
     private static async forEachAction(fn: Function): Promise<void> {
         const methods = ['DELETE', 'GET', 'PATCH', 'POST', 'PUT'];
 
@@ -401,7 +396,7 @@ class JSONTestSuite {
 
     @test()
     async saveResponseToFile(): Promise<void> {
-        const tempPathRegistry = Container.get(TempPathsRegistry);
+        const tempPathRegistry = TempPathsRegistry.instance;
 
         await JSONTestSuite.forEachAction(
             async (
@@ -444,7 +439,7 @@ class JSONTestSuite {
 
     @test()
     async bodyFromFile(): Promise<void> {
-        const tempPathRegistry = Container.get(TempPathsRegistry);
+        const tempPathRegistry = TempPathsRegistry.instance;
         const file = await tempPathRegistry.createTempFile(false, '.json');
         await promisify(writeFile)(file, JSON.stringify({ file: true }), 'utf8');
 
@@ -502,7 +497,7 @@ class JSONTestSuite {
 
     @test()
     async bodyFromTemplateFile(): Promise<void> {
-        const tempPathRegistry = Container.get(TempPathsRegistry);
+        const tempPathRegistry = TempPathsRegistry.instance;
         const file = await tempPathRegistry.createTempFile(false, '.json');
         await promisify(writeFile)(file, JSON.stringify({ file: '<%- ctx.test %>' }), 'utf8');
 
