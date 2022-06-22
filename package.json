@@ -18,7 +18,7 @@
   "dependencies": {
     "@types/superagent": "4.1.11",
     "form-data": "4.0.0",
-    "got": "11.8.2",
+    "got": "11.8.5",
     "joi": "17.4.0",
     "mime-types": "2.1.31",
     "stream-buffers": "3.0.2",
