@@ -23,7 +23,7 @@
     "mime-types": "2.1.31",
     "stream-buffers": "3.0.2",
     "superagent": "^6.1.0",
-    "user-agents": "1.0.684"
+    "user-agents": "1.1.5"
   },
   "peerDependencies": {
     "fbl": ">=1.15.1 <2.0.0"

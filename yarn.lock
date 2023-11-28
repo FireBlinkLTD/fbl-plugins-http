@@ -1712,7 +1712,7 @@ detect-file@^1.0.0:
   resolved "https://registry.yarnpkg.com/detect-file/-/detect-file-1.0.0.tgz#f0d66d03672a825cb1b73bdb3fe62310c8e552b7"
   integrity sha1-8NZtA2cqglyxtzvbP+YjEMjlUrc=
 
-detect-indent@6.0.0, detect-indent@~6.0.0:
+detect-indent@6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/detect-indent/-/detect-indent-6.0.0.tgz#0abd0f549f69fc6659a254fe96786186b6f528fd"
   integrity sha512-oSyFlqaTHCItVRGK5RmrmjB+CmaMOW7IaNA/kdxqhoa6d17j/5ce9O9eWXmV/KEdRwqpQA+Vqe8a8Bsybu4YnA==
@@ -1733,20 +1733,6 @@ dir-glob@^3.0.1:
   integrity sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==
   dependencies:
     path-type "^4.0.0"
-
-docopt@~0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/docopt/-/docopt-0.6.2.tgz#b28e9e2220da5ec49f7ea5bb24a47787405eeb11"
-  integrity sha1-so6eIiDaXsSffqW7JKR3h0Be6xE=
-
-dot-json@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/dot-json/-/dot-json-1.2.2.tgz#7d35abece4aa22aa75a761388953f98495401bcc"
-  integrity sha512-AKL+GsO4wSEU4LU+fAk/PqN4nQ6PB1vT3HpMiZous9xCzK5S0kh4DzfUY0EfU67jsIXLlu0ty71659N9Nmg+Tw==
-  dependencies:
-    detect-indent "~6.0.0"
-    docopt "~0.6.2"
-    underscore-keypath "~0.0.22"
 
 dot-prop@^4.2.1:
   version "4.2.1"
@@ -5314,18 +5300,6 @@ uid-safe@2.1.5:
   dependencies:
     random-bytes "~1.0.0"
 
-underscore-keypath@~0.0.22:
-  version "0.0.22"
-  resolved "https://registry.yarnpkg.com/underscore-keypath/-/underscore-keypath-0.0.22.tgz#48a528392bb6efc424be1caa56da4b5faccf264d"
-  integrity sha1-SKUoOSu278QkvhyqVtpLX6zPJk0=
-  dependencies:
-    underscore "*"
-
-underscore@*:
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.1.tgz#0c1c6bd2df54b6b69f2314066d65b6cde6fcf9d1"
-  integrity sha512-hzSoAVtJF+3ZtiFX0VgfFPHEDRm7Y/QPjGyNo4TVdnDTdft3tr8hEkD25a1jC+TjTuE7tkHGKkhwCgs9dgBB2g==
-
 underscore@~1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.6.0.tgz#8b38b10cacdef63337b8b24e4ff86d45aea529a8"
@@ -5388,12 +5362,11 @@ url-parse-lax@^1.0.0:
   dependencies:
     prepend-http "^1.0.1"
 
-user-agents@1.0.684:
-  version "1.0.684"
-  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.684.tgz#6a397cef0e9665b3ae11578c39084581005a94df"
-  integrity sha512-kYvaRcl+eJH/8AiDMkpaISWWC/GScFEbkStRpcS3ik5NnPNOacu0yJs+lyVjfHnxkVOQ6hHVmKJbZHlyO26ZRA==
+user-agents@1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.1.5.tgz#685cfd546615d11be9972f30fb7c560287084d8d"
+  integrity sha512-+I7gq+SJwWcQcjyF033QQE2g+/lGpb1pU0PypJ5EipS3vhhVJMsOb7osQt+qPeu8kyjqdbG/pQ7dOrOcU5v+AA==
   dependencies:
-    dot-json "^1.2.2"
     lodash.clonedeep "^4.5.0"
 
 util-deprecate@^1.0.1:
