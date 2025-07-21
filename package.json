@@ -17,12 +17,12 @@
   "license": "MIT",
   "dependencies": {
     "@types/superagent": "4.1.11",
-    "form-data": "4.0.0",
+    "form-data": "4.0.4",
     "got": "11.8.2",
     "joi": "17.4.0",
     "mime-types": "2.1.31",
     "stream-buffers": "3.0.2",
-    "superagent": "^6.1.0",
+    "superagent": "^10.2.2",
     "user-agents": "1.0.684"
   },
   "peerDependencies": {
